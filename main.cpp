@@ -1,17 +1,18 @@
 #include <iostream>
 #include "init.h"
 #include "output.h"
+#include "game.h"
 using namespace std;
 
 
 int main()
 {
-    int const taille(19);
-    char goban[taille][taille];
-    cout << "Taille du goban: " << taille << "x" << taille << "\n\n";
+    int const SIZE(19);
+    char goban[SIZE][SIZE];
+    cout << "Taille du goban: " << SIZE << "x" << SIZE << "\n\n";
 
-    init(goban, taille);
-    output(goban, taille);
+    init(goban, SIZE);
+    loop(goban, SIZE);
 
     return 0;
 }

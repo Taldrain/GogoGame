@@ -1,9 +1,9 @@
-.SUFFIXES:.ml .cmx
+.SUFFIXES:.cpp .o
 
 CC=g++
 RM=rm -f
 OUT=go
-CPP=init.cpp output.cpp main.cpp
+CPP=init.cpp output.cpp game.cpp main.cpp
 OBJS= ${CPP:.cpp=.o}
 
 
