@@ -3,7 +3,7 @@
 CC=g++
 RM=rm -f
 OUT=go
-CPP=init.cpp output.cpp game.cpp main.cpp
+CPP=goban.cpp main.cpp
 OBJS= ${CPP:.cpp=.o}
 
 
