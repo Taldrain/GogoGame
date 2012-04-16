@@ -60,26 +60,15 @@ int
 main(int argc, char **argv)
 {
 	caml_main(argv);
-  unsigned int random_seed = 1;
 
-  /* Optionally a random seed can be passed as an argument to the program. */
-  if (argc > 1)
-    sscanf(argv[1], "%u", &random_seed);
-  srand(random_seed);
-  
-  /* Make sure that stdout is not block buffered. */
-  setbuf(stdout, NULL);
-  
-  /* Inform the GTP utility functions about the initial board size. */
-  gtp_internal_set_boardsize(board_size);
+	/* Make sure that stdout is not block buffered. */
+	setbuf(stdout, NULL);
 
-  /* Initialize the board. */
-  init_brown();
+	/* Process GTP commands. */
+	//gtp_main_loop(commands, stdin, NULL);
+	// CAML code here ?
 
-  /* Process GTP commands. */
-  gtp_main_loop(commands, stdin, NULL);
-
-  return 0;
+	return 0;
 }
 
 /* We are talking version 2 of the protocol. */
@@ -112,11 +101,11 @@ gtp_known_command(char *s)
    */
   if (sscanf(s, "%s", command_name) < 1)
     return gtp_success("false");
-  
+
   for (i = 0; commands[i].name; i++)
     if (!strcmp(command_name, commands[i].name))
       return gtp_success("true");
-  
+
   return gtp_success("false");
 }
 
@@ -148,14 +137,14 @@ gtp_boardsize(char *s)
 
   if (sscanf(s, "%d", &boardsize) < 1)
     return gtp_failure("boardsize not an integer");
-  
+
   if (boardsize < MIN_BOARD || boardsize > MAX_BOARD)
     return gtp_failure("unacceptable size");
 
   /*
    * TODO : call CAML code
    */
-  
+
   return gtp_success("");
 }
 
@@ -171,7 +160,7 @@ gtp_komi(char *s)
 {
   if (sscanf(s, "%f", &komi) < 1)
     return gtp_failure("komi not a float");
-  
+
   return gtp_success("");
 }
 
