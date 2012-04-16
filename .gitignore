@@ -6,3 +6,8 @@
 
 *~
 *.swp
+.paths
+.preferences.xml
+.project
+.settings/
+
