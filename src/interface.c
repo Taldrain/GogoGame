@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>  /* for rand() and srand() */
+#include "caml_func.c"
 
+#define VERSION_STRING "0.0.1"
 
 /* Maximum allowed line length in GTP. */
 #define GTP_BUFSIZE 1000
@@ -13,6 +15,9 @@
 /* Whether the GTP command was successful. */
 #define GTP_SUCCESS  0
 #define GTP_FAILURE  1
+
+#define MIN_BOARD 9
+#define MAX_BOARD 19
 
 /* Forward declarations. */
 static int gtp_protocol_version(char *s);
@@ -32,6 +37,15 @@ static int gtp_genmove(char *s);
 static int gtp_final_score(char *s);
 static int gtp_final_status_list(char *s);
 static int gtp_showboard(char *s);
+
+/* Function pointer for callback functions. */
+typedef int (*gtp_fn_ptr)(char *s);
+
+/* Elements in the array of commands required by commands[] . */
+struct gtp_command {
+  const char *name;
+  gtp_fn_ptr function;
+};
 
 /* List of known commands. */
 static struct gtp_command commands[] = {
@@ -59,7 +73,7 @@ static struct gtp_command commands[] = {
 int
 main(int argc, char **argv)
 {
-	caml_main(argv);
+	caml_startup(argv);
 
 	/* Make sure that stdout is not block buffered. */
 	setbuf(stdout, NULL);
@@ -75,30 +89,30 @@ main(int argc, char **argv)
 static int
 gtp_protocol_version(char *s)
 {
-  return gtp_success("2");
+  return 0;// gtp_success("2");
 }
 
 static int
 gtp_name(char *s)
 {
-  return gtp_success("Go Go Game");
+  return 0;// gtp_success("Go Go Game");
 }
 
 static int
 gtp_version(char *s)
 {
-  return gtp_success(VERSION_STRING);
+  return 0; //gtp_success(VERSION_STRING);
 }
 
 static int
 gtp_known_command(char *s)
-{
+{ /*
   int i;
   char command_name[GTP_BUFSIZE];
 
-  /* If no command name supplied, return false (this command never
-   * fails according to specification).
-   */
+  * If no command name supplied, return false (this command never
+  * fails according to specification).
+  *
   if (sscanf(s, "%s", command_name) < 1)
     return gtp_success("false");
 
@@ -106,12 +120,14 @@ gtp_known_command(char *s)
     if (!strcmp(command_name, commands[i].name))
       return gtp_success("true");
 
-  return gtp_success("false");
+  return gtp_success("false");*/
+	return 0;
 }
 
 static int
 gtp_list_commands(char *s)
 {
+	/*
   int i;
 
   gtp_start_response(GTP_SUCCESS);
@@ -119,20 +135,21 @@ gtp_list_commands(char *s)
   for (i = 0; commands[i].name; i++)
     gtp_printf("%s\n", commands[i].name);
 
-  gtp_printf("\n");
-  return GTP_OK;
+  gtp_printf("\n");*/
+  return 0;
 }
 
 static int
 gtp_quit(char *s)
 {
-  gtp_success("");
-  return GTP_QUIT;
+  //gtp_success("");
+  return -1;
 }
 
 static int
 gtp_boardsize(char *s)
 {
+	/*
   int boardsize;
 
   if (sscanf(s, "%d", &boardsize) < 1)
@@ -145,23 +162,21 @@ gtp_boardsize(char *s)
    * TODO : call CAML code
    */
 
-  return gtp_success("");
+  return 0; //gtp_success("");
 }
 
 static int
 gtp_clear_board(char *s)
 {
-  clear_board();
-  return gtp_success("");
+  //clear_board();
+  return 0; //gtp_success("");
 }
 
 static int
 gtp_komi(char *s)
 {
-  if (sscanf(s, "%f", &komi) < 1)
-    return gtp_failure("komi not a float");
-
-  return gtp_success("");
+	// TODO Caml code ?
+  return 0; // gtp_success("");
 }
 
 /* Common code for fixed_handicap and place_free_handicap. */
@@ -171,19 +186,19 @@ place_handicap(char *s, int fixed)
 	/*
 	 * TODO : call CAML code
 	 */
-	return gtp_finish_response();
+	return 0; //gtp_finish_response();
 }
 
 static int
 gtp_fixed_handicap(char *s)
 {
-  return place_handicap(s, 1);
+  return 0; //place_handicap(s, 1);
 }
 
 static int
 gtp_place_free_handicap(char *s)
 {
-  return place_handicap(s, 0);
+  return 0; //place_handicap(s, 0);
 }
 
 static int
@@ -192,7 +207,7 @@ gtp_set_free_handicap(char *s)
   /*
    * TODO : call CAML code
    */
-  return gtp_success("");
+  return 0; //gtp_success("");
 }
 
 static int
@@ -202,7 +217,7 @@ gtp_play(char *s)
 	 * TODO : call CAML code
 	 */
 
-	return gtp_success("");
+	return 0; //gtp_success("");
 }
 
 static int
@@ -211,7 +226,7 @@ gtp_genmove(char *s)
 	/*
 	 * TODO : call CAML code
 	 */
-	return gtp_finish_response();
+	return 0; //gtp_finish_response();
 }
 
 /* Compute final score. We use area scoring since that is the only
@@ -223,7 +238,7 @@ gtp_final_score(char *s)
 	/*
 	 * TODO : call CAML code
 	 */
-	return gtp_success("0");
+	return 0; //gtp_success("0");
 }
 
 static int
@@ -232,7 +247,7 @@ gtp_final_status_list(char *s)
 	/*
 	 * TODO : call CAML code
 	 */
-	return gtp_finish_response();
+	return 0; //gtp_finish_response();
 }
 
 static int
@@ -242,7 +257,7 @@ gtp_showboard(char *s)
 	/*
 	 * TODO : call CAML code
 	 */
-  return gtp_finish_response();
+  return 0; //gtp_finish_response();
 }
 
 

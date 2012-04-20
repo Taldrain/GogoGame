@@ -1,8 +1,10 @@
 *.o
+*.oo
 *.cmx
 *.cmx
 *.cmi
 *.cmo
+*.annot
 
 *~
 *.swp
@@ -10,4 +12,6 @@
 .preferences.xml
 .project
 .settings/
+.depend
+
 

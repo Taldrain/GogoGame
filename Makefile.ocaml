@@ -1,0 +1,79 @@
+# written by Thomas Wickham
+# freely modifiable and redistribuable under the conditions of the GPLv2
+#
+# XXX DO NOT EDIT
+# XXX EDIT Makefile instead
+
+
+.PHONY: all clean mrproper
+
+# RULES and EXEC are magically set in Makefile.magic
+all: depend $(RULES) $(EXE)
+	@echo [DONE]
+
+mli: $(CAML_ONLY:.ml=.mli)
+ml-byte: $(CAML_ONLY:.ml=.cmo)
+ml-called-byte: $(CAML_CALLED_BY_C:.ml=.$(OBJ))
+ml-nativ: $(CAML_ONLY:.ml=.cmx)
+ml-called-nativ: $(CAML_CALLED_BY_C:.ml=.$(OBJ))
+c-wrapper: $(C_WRAPPERS:.c=.oo)
+c-only: $(C_ONLY:.c=.o)
+
+$(EXE):
+	$(CC) -o $(BIN)/$(EXE).exe \
+	    $(FLAGS) $(OCAMLLIB)/stdlib.a \
+	    -L$(OCAMLLIB) $(LINKED) -l$(RUNLIB) \
+	    $(wildcard $(SRC)/*.$(OBJ)) $(wildcard $(SRC)/*.oo)
+
+%.o: %.c
+	$(CC) $(FLAGS_C) -c $< -o $(SRC)/$(*F).o
+%.mli: %.ml
+	$(OCAMLC) $(FLAGS_ML) -i $< > $(SRC)/$(*F).mli
+%.cmi: %.mli
+	$(OCAMLC) $(FLAGS_ML) -c $< -o $(SRC)/$(*F).cmi
+%.cmo: %.ml
+	$(CAMLC) $(FLAGS_ML) -c $< -o $(SRC)/$(*F).cmo
+%.cmx: %.ml
+	$(CAMLOPT) $(FLAGSOPT) -c $< -o $(SRC)/$(*F).cmx
+# native
+%.o: %.ml
+	$(cd $(SRC))
+	$(OCAMLC) -output-obj -o $(*F)_camlcode.o \
+	    $(FLAGS_MLC) \
+	    $<
+%.obj: %.ml
+	# TODO for windows, I assume it's the same as for unix but...
+	$(cd $(SRC))
+	$(OCAMLC) -output-obj -o $(*F)_camlcode.o \
+	    $(FLAGS_MLC) \
+	    $<
+# bytecode
+%.ob: %.ml
+	$(cd $(SRC))
+	$(OCAMLOPT) -output-obj -o $(*F)_camlcode.ob \
+	    $(FLAGS_MLC) \
+	    $<
+%.objb: %.ml
+	# TODO for windows, I assume it's the same as for Unix but...
+	$(cd $(SRC))
+	$(OCAMLOPT) -output-obj -o $(*F)_camlcode.ob \
+	    $(FLAGS_MLC) \
+	    $<
+
+%.oo: %.c
+	$(CC) $(FLAGS_WRAP) -c $< -o $(SRC)/$(*F).oo
+
+
+clean_mli:
+	rm -f $(SRC)/*.mli
+clean:
+	rm -f $(BIN)/*.{a,o,cmi,cmo,cmx}
+	rm -f $(SRC)/*.{a,o,cmi,cmo,cmx}
+
+mrproper: clean
+	rm -f $(BIN)/$(EXE)
+.depend: depend
+depend:
+	$(OCAMLDEP) $(INCLUDES) $(SRC)/*.ml $(SRC)/*.mli > .depend
+
+include .depend

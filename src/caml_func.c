@@ -5,6 +5,8 @@
 		Il suffit de l inclure cote C pour profiter des fonctions
 **/
 
+#include <stdio.h>
+#include <string.h>
 #include <caml/mlvalues.h>
 #include <caml/callback.h>
 
@@ -15,7 +17,7 @@ void call_caml_f(int x)
 	if (closure_f == NULL) /* First time around, look up by name */
 		closure_f = caml_named_value("Nom Arbitraire");
 
-	caml_callback(*closure_f, Val_int(arg));
+	caml_callback(*closure_f, Val_int(x));
 }
 
 int fib(int n)
