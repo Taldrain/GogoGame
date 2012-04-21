@@ -1,4 +1,6 @@
-(** implement la logique de l'IA **)
+(**
+    Implemente la logique de l'IA
+**)
 
 type action =
   | Ok

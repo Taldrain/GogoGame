@@ -1,19 +1,31 @@
 (** Parser implemente le protocole GTP **)
 open Batteries_uni
-
 open Entities
+open Protocol
+
+
+module Formatter =
+struct
+(** le formatter s'occupe de bien formatter l'output **)
 
 open Protocol
 
-type t_action =
-  | Command of Protocol.command
-  | CommandFull of (int * Protocol.command)
-  | Success
-  | SuccessFull of (int * string)
-  | SuccessID of int
-  | SuccessSTR of string
-  | FailureFull of (int * string)
-  | Failure of string
+let catched_id = ref false
+let id = ref (-1)
+let set_id i = catched_id := true; id := i
+
+let _id () = if !catched_id then (catched_id := false; (string_of_int !id)) else "" 
+
+let format = function
+  | Success | SuccessID _ -> "="^(_id ())^"\n\n"
+  | SuccessSTR str | SuccessFull (_,str) -> "="^(_id ())^" "^str^"\n\n"
+  | FailureFull(_,str) | Failure str -> "?"^(_id ())^" "^str^"\n\n"
+  | Command cmd -> (string_of_command cmd)^"\n"
+  | CommandFull (id,cmd) -> (set_id id; (string_of_command cmd)^"\n")
+
+end
+
+
 
 exception Protocol_error
 exception Unknown_command

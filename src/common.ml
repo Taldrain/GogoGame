@@ -1,4 +1,8 @@
+(**
+    Les fonctions pratiques, appellees depuis tout le programme
 
+    note : ne DOIT pas avoir de dependance a un autre fichier du programme
+**)
 open Batteries_uni
 
 exception Invalid_int_of_char

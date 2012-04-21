@@ -1,3 +1,6 @@
+(**
+    Implemente les differentes entites qui sont utilisees pour GTP
+**)
 open Batteries_uni
 
 module Color =

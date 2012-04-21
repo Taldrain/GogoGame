@@ -1,30 +1,36 @@
 (************************************************************************
- * 
- *                             Gogo Game
- * 
- *                 Yet   another   AI   for   the   Go   Game 
- * 
- * 
- *************************************************************************)
+*
+* Gogo Game
+*
+* Yet another AI for the Go Game
+*
+*
+*************************************************************************)
 open Batteries_uni
 
 let end_game = ref false
+exception Quit_signal
 
-let format (str:string) = str
+let clean_exit () =
+  end_game := true
+
 
 let gtp_main_loop () =
   let input = input_line stdin in
   match Parser.parse_line input with
-  | Parser.Success | Parser.SuccessID _ | Parser.SuccessFull _ -> ()
-  | Parser.SuccessSTR  _ | Parser.Failure _ | Parser.FailureFull _ -> ()
-  | Parser.Command cmd | Parser.CommandFull (_,cmd) ->
-  let output = AI.do_action cmd in
-  let output = format output in
-  print_string output; flush stdout
-
+  | Protocol.Success -> ()
+  | Protocol.SuccessID _ -> ()
+  | Protocol.SuccessFull _ -> ()
+  | Protocol.SuccessSTR _ -> ()
+  | Protocol.Failure _ -> ()
+  | Protocol.FailureFull _ -> ()
+  | Protocol.Command cmd | Protocol.CommandFull (_, cmd) ->
+      let output = Engine.action cmd in
+      let output = Parser.Formatter.format output in
+      print_string output; flush stdout
 
 let _ =
   while not !end_game
   do
-    gtp_main_loop ()
+    try gtp_main_loop () with Quit_signal -> clean_exit ()
   done
