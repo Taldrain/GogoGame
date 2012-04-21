@@ -15,12 +15,8 @@ type t_action =
   | FailureFull of (int * string)
   | Failure of string
 
-exception Invalid_end
-
 exception Protocol_error
-
 exception Unknown_command
-
 exception Syntax_error
 
 (** retire les chars invalides de l'input, a savoir:
@@ -50,25 +46,36 @@ let preprocess str =
 
 let slurp_enum e = (BatString.of_enum e) |> BatString.trim
 
-let parse_vertex_list e = []
+let parse_vertex_list e =
+  let rec parse str l =
+    try
+      let (h, body) = BatString.split str " " in
+      let v = Vertex.vertex_of_string h in
+      parse body (v:: l)
+    with Not_found -> (Vertex.vertex_of_string str)::l
+  in
+  if (BatEnum.count e) = 0 then raise Syntax_error
+  else parse (BatString.of_enum e) []
 
 let get_nb e =
   let rec get_nb e nb =
     match Enum.get e with
-    | None -> raise Invalid_end
+    | None -> nb
     | Some c ->
         (match c with
           | ('0' .. '9' as n) -> get_nb e ((nb * 10) + (Char.code n))
           | ' ' | '\n' -> nb
-          | _ -> raise Invalid_end)
-  in get_nb e 0
+          | _ -> raise Syntax_error)
+  in
+  if BatEnum.count e = 0 then raise Syntax_error
+  else get_nb e 0
 
 let drop_one e = (BatEnum.drop 1 e; e)
 
 let verify_cmd_name e cmd =
-  let i = ref (-1) in
-  let e' = BatEnum.take_while (fun c -> (incr i; c = cmd.[!i])) e
-  in (String.length cmd) = (BatEnum.count e')
+  let i = ref (-1) and len = String.length cmd in
+  let e' = BatEnum.take_while (fun c -> (incr i; !i < len && c = cmd.[!i])) e
+  in len = (BatEnum.count e')
 
 let parse_cmd e =
   let get e =
@@ -130,8 +137,7 @@ let parse_cmd e =
 (** extrait le type de communication et son id si specifie **)
 let decode_line e =
   let peek e =
-    match BatEnum.peek e with | None -> raise Protocol_error | Some c -> c in
-  let get_str e = (*(BatString.of_enum e) |> BatString.trim |>*) parse_cmd e
+    match BatEnum.peek e with | None -> raise Protocol_error | Some c -> c
   in
   match peek e with
   | '=' ->
@@ -149,19 +155,10 @@ let decode_line e =
         | ' ' -> Failure ""
         | '0' .. '9' -> FailureFull ((get_nb e), (slurp_enum e))
         | _ -> raise Protocol_error)
-  | '0' .. '9' -> CommandFull ((get_nb e), (get_str e))
-  | _ -> Command (get_str e)
+  | '0' .. '9' -> CommandFull ((get_nb e), (parse_cmd e))
+  | _ -> Command (parse_cmd e)
 
 (** parse la ligne **)
 let parse_line str =
   let str = preprocess str
-  in
-  match decode_line str with
-  | Success -> ()
-  | SuccessID id -> ()
-  | Command cmd -> ()
-  | CommandFull (id, cmd) -> ()
-  | SuccessFull (id, resp) -> ()
-  | SuccessSTR resp -> ()
-  | FailureFull (id, resp) -> ()
-  | Failure resp -> ()
+  in (decode_line str)

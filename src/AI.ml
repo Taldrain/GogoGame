@@ -5,4 +5,4 @@ type action =
   | None
 
 let do_action action =
-  "OK"
+  "OK\n"
