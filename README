@@ -10,7 +10,7 @@ be taken as a real simulation of a go game.
 
 2. Utilisation
 Everything is still not implemented.
-If you want to pass your tour you have to enter the coordonnees Z and 0.
+If you want to pass you have to enter the coordonnees Z and 0.
 
 3. Todo
     - Finish the interface for be able to play
@@ -18,3 +18,5 @@ If you want to pass your tour you have to enter the coordonnees Z and 0.
         - try to output some fancy/useful things
     - Prepare an good way to implement the AI
     - Learn English
+
+    
