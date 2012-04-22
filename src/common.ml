@@ -17,33 +17,41 @@ let int_of_char c =
   if code >= 0 && code <= 9 then code
   else raise Invalid_int_of_char
 
-exception Invalid_alphabet_char
+exception Invalid_alphabet_of_char
 
-(** retourne la place dnas l'alphabet d'un char alphabetique (A=0,B=1,etc.)
+(** retourne la place dans l'alphabet d'un char alphabetique (A=0,B=1,etc.)
     @param c:char un char alphabetique tel 'A' ou 'a'
     @return la place dans l'alphabet latin de cette lettre
     @raise Invalid_alphabet_char si le char n'est pas une lettre de l'alphabet
 **)
 let int_of_letter c =
   let code = (Char.code c)- 65 in
-  if code < 0 then raise Invalid_alphabet_char
+  if code < 0 then raise Invalid_alphabet_of_char
   else if code < 27 then code
   else
     let code = code - 32 in
-    if code < 0 then raise Invalid_alphabet_char
+    if code < 0 then raise Invalid_alphabet_of_char
     else if code < 27 then code
-    else raise Invalid_alphabet_char
+    else raise Invalid_alphabet_of_char
+
+exception Invalid_alphabet_of_int
+
+let letter_of_int i =
+  let c = Char.chr (i+65) in
+    match c with
+      | 'A'..'Z' | 'a'..'z' -> c
+      | _ -> raise Invalid_alphabet_of_int
 
 let enum_push e elt = Enum.push e elt;e
 
-(* fonction de switch sans test (dans predicate), et success parametré *)
-let rec switchF default predicates param =
+(* fonction de switch sans test (dans predicate), et success non-parametré *)
+let rec switchF (default:'a) (predicates:((('b -> bool) * 'a) list)) (param:'b) =
   match predicates with
-    | [] -> default
+    | [] -> default param
     | (test,success)::[] -> if test param then success param
-                            else default
+                            else default param
     | (test,success)::l -> if test param then success param
-                           else switchF param l default
+                           else switchF default l param
 
 (* fonction de switch avec comparer parametré, et success parametré *)
 let rec switchC (comparer:('a -> 'b -> bool)) (default:'b) predicates (param:'b) =
@@ -57,3 +65,7 @@ let rec switchC (comparer:('a -> 'b -> bool)) (default:'b) predicates (param:'b)
 (* fonction de switch avec comparer prédéterminé (=), et success paramétré *)
 let rec switch = (switchC (=))
 let a = switch 0 [(1,((+) 2))] 2
+
+let div_eucl a b =
+  let rec div a b q = if a < b then (q,a) else div (a-b) b (q+1)
+  in div a b 0 
