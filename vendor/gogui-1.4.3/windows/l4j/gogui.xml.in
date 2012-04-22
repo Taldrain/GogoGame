@@ -1,0 +1,33 @@
+<launch4jConfig>
+  <dontWrapJar>false</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>../../lib/gogui.jar</jar>
+  <outfile>GoGui.exe</outfile>
+  <errTitle>GoGui</errTitle>
+  <cmdLine></cmdLine>
+  <chdir></chdir>
+  <priority>normal</priority>
+  <supportUrl>http://gogui.sourceforge.net</supportUrl>
+  <customProcName>true</customProcName>
+  <stayAlive>false</stayAlive>
+  <manifest></manifest>
+  <icon>../icons/gogui.ico</icon>
+  <jre>
+    <path></path>
+    <minVersion>1.5.0</minVersion>
+    <maxVersion></maxVersion>
+    <jdkPreference>preferJre</jdkPreference>
+  </jre>
+  <versionInfo>
+    <fileVersion>0.0.0.0</fileVersion>
+    <txtFileVersion>unknown</txtFileVersion>
+    <fileDescription>GoGui</fileDescription>
+    <copyright>Markus Enzenberger</copyright>
+    <productVersion>0.0.0.0</productVersion>
+    <txtProductVersion>@VERSION@</txtProductVersion>
+    <productName>GoGui</productName>
+    <companyName></companyName>
+    <internalName>GoGui</internalName>
+    <originalFilename>GoGui.exe</originalFilename>
+  </versionInfo>
+</launch4jConfig>

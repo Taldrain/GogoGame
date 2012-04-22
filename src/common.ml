@@ -35,3 +35,25 @@ let int_of_letter c =
     else raise Invalid_alphabet_char
 
 let enum_push e elt = Enum.push e elt;e
+
+(* fonction de switch sans test (dans predicate), et success parametré *)
+let rec switchF default predicates param =
+  match predicates with
+    | [] -> default
+    | (test,success)::[] -> if test param then success param
+                            else default
+    | (test,success)::l -> if test param then success param
+                           else switchF param l default
+
+(* fonction de switch avec comparer parametré, et success parametré *)
+let rec switchC (comparer:('a -> 'b -> bool)) (default:'b) predicates (param:'b) =
+  match predicates with
+    | [] -> default
+    | (test,success)::[] -> if comparer test param then success param
+                        else default
+    | (test,success)::l -> if comparer test param then success param
+                        else switchC comparer default l param
+
+(* fonction de switch avec comparer prédéterminé (=), et success paramétré *)
+let rec switch = (switchC (=))
+let a = switch 0 [(1,((+) 2))] 2

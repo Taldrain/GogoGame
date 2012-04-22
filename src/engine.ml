@@ -7,7 +7,7 @@ exception Illegal_move
 
 let list_commands () = "protocol_version\nname\nversion\nquit\nknown_command
 list_commands\nboardsize\nclear_board\nkomi\nfixed_handicap\nplace_free_handicap
-set_free_handicap\nplay'genmove\nundo"
+set_free_handicap\nplay\ngenmove\nundo"
 
 let boardsize = ref 0
 let is_clear = ref true

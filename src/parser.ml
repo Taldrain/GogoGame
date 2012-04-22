@@ -75,7 +75,7 @@ let get_nb e =
     | None -> nb
     | Some c ->
         (match c with
-          | ('0' .. '9' as n) -> get_nb e ((nb * 10) + (Char.code n))
+          | ('0' .. '9' as n) -> get_nb e ((nb * 10) + (Common.int_of_char n))
           | ' ' | '\n' -> nb
           | _ -> raise Syntax_error)
   in
@@ -89,7 +89,7 @@ let verify_cmd_name e cmd =
   let e' = BatEnum.take_while (fun c -> (incr i; !i < len && c = cmd.[!i])) e
   in len = (BatEnum.count e')
 
-let parse_cmd e =
+let rec parse_cmd e =
   let get e =
     match BatEnum.get e with | None -> raise Protocol_error | Some c -> c
   
@@ -167,7 +167,7 @@ let decode_line e =
         | ' ' -> Failure ""
         | '0' .. '9' -> FailureFull ((get_nb e), (slurp_enum e))
         | _ -> raise Protocol_error)
-  | '0' .. '9' -> CommandFull ((get_nb e), (parse_cmd e))
+  | '0' .. '9' -> Formatter.set_id (get_nb e); Command (parse_cmd e)
   | _ -> Command (parse_cmd e)
 
 (** parse la ligne **)

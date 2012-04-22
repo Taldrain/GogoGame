@@ -1,0 +1,147 @@
+; Script for creating a Windows installer with NSIS
+; (http://nsis.sourceforge.net)
+
+!define GOGUI_VERSION "@VERSION@"
+!define UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\GoGui" 
+
+SetCompressor /SOLID lzma
+
+!define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\orange-install.ico"
+!define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\orange-uninstall.ico"
+!define MUI_WELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\orange.bmp"
+!define MUI_COMPONENTSPAGE_NODESC
+!include "MUI.nsh"
+!insertmacro MUI_PAGE_WELCOME
+!insertmacro MUI_PAGE_LICENSE "License.txt"
+!insertmacro MUI_PAGE_COMPONENTS
+!insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_INSTFILES
+!define MUI_FINISHPAGE_RUN "$INSTDIR\GoGui.exe"
+!insertmacro MUI_PAGE_FINISH
+!insertmacro MUI_UNPAGE_CONFIRM
+!insertmacro MUI_UNPAGE_INSTFILES
+
+!insertmacro MUI_LANGUAGE "English"
+!insertmacro MUI_LANGUAGE "German"
+!insertmacro MUI_RESERVEFILE_INSTALLOPTIONS 
+
+!define ADD_START_MENU_ENTRY_DEFAULT "Add start menu entry"
+!define CREATE_DESKTOP_SHORTCUT_DEFAULT "Create desktop shortcut"
+!define INSTALLER_TITLE_DEFAULT "GoGui ${GOGUI_VERSION} Installer"
+!define REGISTER_AS_SGF_HANDLER_DEFAULT "Register GoGui as handler for SGF files"
+LangString ADD_START_MENU_ENTRY ${LANG_ENGLISH} \
+  "${ADD_START_MENU_ENTRY_DEFAULT}"
+LangString CREATE_DESKTOP_SHORTCUT ${LANG_ENGLISH} \
+  "${CREATE_DESKTOP_SHORTCUT_DEFAULT}"
+LangString INSTALLER_TITLE ${LANG_ENGLISH} \
+  "${INSTALLER_TITLE_DEFAULT}"
+LangString REGISTER_AS_SGF_HANDLER ${LANG_ENGLISH} \
+  "${REGISTER_AS_SGF_HANDLER_DEFAULT}"
+!include "German.nsh"
+
+Name "GoGui"
+Caption "$(INSTALLER_TITLE)"
+OutFile "..\..\gogui-${GOGUI_VERSION}-install.exe"
+InstallDir "$PROGRAMFILES\GoGui"
+InstallDirRegKey HKLM "Software\GoGui" ""
+; Set admin level, needed for shortcut removal on Vista
+; (http://nsis.sourceforge.net/Shortcuts_removal_fails_on_Windows_Vista)
+RequestExecutionLevel admin
+
+Section
+
+IfFileExists "$INSTDIR\Uninstall.exe" 0 +2
+ExecWait '"$INSTDIR\Uninstall.exe" /S _?=$INSTDIR'
+
+SetOutPath "$INSTDIR"
+File "License.txt"
+File "..\l4j\GoGui.exe"
+File "..\l4j\gogui-adapter.exe"
+File "..\l4j\gogui-dummy.exe"
+File "..\l4j\gogui-terminal.exe"
+File "..\l4j\gogui-client.exe"
+File "..\l4j\gogui-regress.exe"
+File "..\l4j\gogui-thumbnailer.exe"
+File "..\l4j\gogui-convert.exe"
+File "..\l4j\gogui-server.exe"
+File "..\l4j\gogui-twogtp.exe"
+File "..\l4j\gogui-display.exe"
+File "..\l4j\gogui-statistics.exe"
+File "..\icons\gogui.ico"
+
+WriteRegStr HKLM "Software\GoGui" "" $INSTDIR
+
+WriteUninstaller $INSTDIR\Uninstall.exe
+WriteRegStr HKLM "${UNINST_KEY}" "DisplayName" "GoGui"
+WriteRegStr HKLM "${UNINST_KEY}" "DisplayVersion" "${GOGUI_VERSION}"
+WriteRegStr HKLM "${UNINST_KEY}" "DisplayIcon" "$INSTDIR\gogui.ico"
+WriteRegStr HKLM "${UNINST_KEY}" "URLInfoAbout" "http://gogui.sourceforge.net/"
+WriteRegStr HKLM "${UNINST_KEY}" "UninstallString" "$INSTDIR\Uninstall.exe"
+
+SectionEnd
+
+Section "$(ADD_START_MENU_ENTRY)"
+
+SetShellVarContext all
+CreateDirectory "$SMPROGRAMS\Games"
+CreateShortCut "$SMPROGRAMS\Games\GoGui.lnk" "$INSTDIR\GoGui.exe"
+
+SectionEnd
+
+Section "$(CREATE_DESKTOP_SHORTCUT)"
+
+SetShellVarContext all
+CreateShortCut "$DESKTOP\GoGui.lnk" "$INSTDIR\GoGui.exe"
+
+SectionEnd
+ 
+Section "$(REGISTER_AS_SGF_HANDLER)"
+
+File "..\icons\sgf.ico"
+
+WriteRegStr HKCR ".sgf" "" "GoGui"
+WriteRegStr HKCR ".sgf" "Content Type" "application/x-go-sgf"
+WriteRegStr HKCR "GoGui" "" "SGF File (Smart Game Format)"
+WriteRegStr HKCR "GoGui\DefaultIcon" "" "$INSTDIR\sgf.ico"
+WriteRegStr HKCR "GoGui\shell\open\command" "" \
+  "$\"$INSTDIR\GoGui.exe$\" $\"%1$\""
+
+WriteRegStr HKCR "MIME\Database\Content Type\application/x-go-sgf" \
+  "Extension" ".sgf"
+
+WriteRegStr HKCR "Applications\GoGui.exe" "SupportedTypes" ".sgf"
+WriteRegStr HKCR "Applications\GoGui\shell\open\command" "" \
+  "$\"$INSTDIR\GoGui.exe$\" $\"%1$\""
+
+SectionEnd
+
+Section "Uninstall"
+ 
+Delete "$INSTDIR\Uninstall.exe"
+Delete "$INSTDIR\GoGui.exe"
+Delete "$INSTDIR\gogui-adapter.exe"
+Delete "$INSTDIR\gogui-dummy.exe"
+Delete "$INSTDIR\gogui-terminal.exe"
+Delete "$INSTDIR\gogui-client.exe"
+Delete "$INSTDIR\gogui-regress.exe"
+Delete "$INSTDIR\gogui-thumbnailer.exe"
+Delete "$INSTDIR\gogui-convert.exe"
+Delete "$INSTDIR\gogui-server.exe"
+Delete "$INSTDIR\gogui-twogtp.exe"
+Delete "$INSTDIR\gogui-display.exe"
+Delete "$INSTDIR\gogui-statistics.exe"
+Delete "$INSTDIR\License.txt"
+Delete "$INSTDIR\gogui.ico"
+Delete "$INSTDIR\sgf.ico"
+RmDir "$INSTDIR"
+
+SetShellVarContext all
+Delete "$SMPROGRAMS\Games\GoGui.lnk"
+Delete "$DESKTOP\GoGui.lnk"
+
+DeleteRegKey HKLM "Software\GoGui"
+DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\GoGui"
+DeleteRegKey HKCR "GoGui"
+DeleteRegKey HKCR "Applications\GoGui.exe"
+
+SectionEnd
