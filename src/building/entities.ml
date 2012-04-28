@@ -81,7 +81,7 @@ module Move = struct
 
   let move_of_string_plus str =
     let {color=c;vert={Vertex.letter=l;Vertex.nb=n;Vertex.pass=p}} = move_of_string str in
-      {color=c;vert={Vertex.letter=l;Vertex.nb=(n+1);Vertex.pass=p}}
+      {color=c;vert={Vertex.letter=l;Vertex.nb=(n-1);Vertex.pass=p}}
 end
 
 type color = Color.t

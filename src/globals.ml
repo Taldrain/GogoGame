@@ -1,12 +1,12 @@
 (**
     Ce module contient toutes les variables gloables du programme
-    
+
     Si si, des fois ca sert ;-)
 **)
 let komi = ref 0.
-  
+
 let board = BatGlobal.empty "board"
-  
+
 let b () = BatGlobal.get board
 let set_board b = BatGlobal.set board b
 
@@ -24,4 +24,4 @@ let init_last_played () =
       Entities.Vertex.pass = false;
       Entities.Vertex.nb = 0;
     }
-*)  
+*)

@@ -3,6 +3,8 @@ Logique fonctionnelle du jeu (aKa pas l'intelligence, uniquement les reactions
 **)
 open Protocol
 open Entities.Move
+open Entities.Vertex
+open Entities.Color
 
 exception Illegal_move
 
@@ -27,11 +29,9 @@ let choose_fixed_handicap i = (* TODO *)
   else
     Success
 
-
 let place_free_handicap i = Success (* TODO *)
 let set_free_handicap l = Success (* TODO *)
 let play m = (b ())#place_stone m; History.play m
-
 let genmove c = let move = AI.genmove c in
   (b ())#place_stone move;
   let v = Entities.Vertex.string_of_vertex move.vert in

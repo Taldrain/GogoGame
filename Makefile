@@ -1,8 +1,13 @@
+INC := -I src -I src/building -I src/talking -I src/thinking
+
 all:
-	ocamlbuild -pkg batteries -I src main.native -use-ocamlfind
+	ocamlbuild -pkg batteries $(INC) main.native -use-ocamlfind
 
 bytecode:
-	ocamlbuild -pkg batteries -I src main.byte -use-ocamlfind
+	ocamlbuild -pkg batteries $(INC) main.byte -use-ocamlfind
 
 debug:
-	ocamlbuild -pkg batteries -I src main.d.byte -use-ocamlfind
+	ocamlbuild -pkg batteries $(INC) main.d.byte -use-ocamlfind
+
+clean:
+	ocamlbuild -pkg batteries $(INC) main.d.byte -use-ocamlfind -clean

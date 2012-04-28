@@ -2,15 +2,10 @@
 Implemente la logique de l'IA
 **)
 open Entities
-  
 open Entities.Color
-  
 open Entities.Move
-  
 open Entities.Vertex
-  
 open Board
-  
 open Globals
 
 let b () = Globals.b ()
