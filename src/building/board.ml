@@ -20,6 +20,11 @@ type node =
   | Middle of (id * Color.t * (id * id * id * id))
 (** ordre des nodes voisins : gauche, haut, bas, droite **)
 
+let color_of_node = function
+  | Corner (_,c,_) | Border (_,c,_) | Middle (_,c,_) -> c
+let id_of_node = function
+  | Corner (i,_,_) | Border (i,_,_) | Middle (i,_,_) -> i
+
 exception Invalid_id of string
 
 let left i = i - 1
@@ -28,7 +33,7 @@ let up s i = i + s
 let down s i = i - s
 
 
-let node_of_int bsize (i:int) =
+let node_of_int bsize i =
   let up = (up bsize)
   and down = (down bsize) in
   let predicates = 
@@ -71,3 +76,10 @@ class board boardsize =
     method is_clear = is_clear
     method unset_stone {color=_;vert=v} = self#place_stone {color=Empty;vert=v}
   end
+
+let get_neighbours b s =
+  let id = b#get s in
+  match id with
+    | Corner(_,_,(c1,c2)) -> c1::c2::[]
+    | Border(_,_,(c1,c2,c3)) -> c1::c2::c3::[]
+    | Middle(_,_,(c1,c2,c3,c4)) -> c1::c2::c3::c4::[]
