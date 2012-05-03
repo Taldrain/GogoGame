@@ -46,6 +46,7 @@ let genmove c =
     SuccessSTR v
 
 let undo () = (b#get#unset_stone (History.undo ()))
+(* TODO faire raffraichir la board par l'IA *)
 
 let action = function
   | Protocol_version -> SuccessSTR "2"
