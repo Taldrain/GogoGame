@@ -3,6 +3,7 @@ Cette classe sert a representer un groupe de pierres sur la board
 C'est une classe afin de permettre de l'etendre plus tard avec des
 combinaisons et groupes speciaux
 **)
+open BatPervasives
 open Entities.Move
 open Entities.Color
 open Entities.Vertex
@@ -48,7 +49,7 @@ object (self)
       match l with
       | [] -> accu
       | s:: l -> let n = Board.get_neighbours b#get s in
-        let n = (BatList.map (fun i -> (b#get#get i) |> Board.color_of_node))
+        let n = (BatList.map (fun i -> (b#get#get i) |> Board.color_of_node)) in
           iter l have_seen (accu + (compute have_seen n 0))
     in
     iter stones (ref (BatHashtbl.create 101)) 0
