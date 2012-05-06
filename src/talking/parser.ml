@@ -138,7 +138,7 @@ let rec parse_cmd e =
                       (fun e -> Place_free_handicap (get_nb (drop_one e)))
                 | 'y' ->
                     if (get e) = ' '
-                    then Play (Move.move_of_string_plus (BatString.of_enum e))
+                    then Play (Move.move_of_string (BatString.of_enum e))
                     else raise Unknown_command
                 | _ -> raise Unknown_command)
         | _ -> raise Unknown_command)

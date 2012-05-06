@@ -1,8 +1,6 @@
 (**
 Implemente les differentes entites qui sont utilisees pour GTP
 **)
-open Batteries_uni
-
 open Common
 
 module Color =
@@ -44,8 +42,7 @@ struct
   
   let vertex_of_string str =
     let rec parse e i =
-      (BatEnum.drop 1 e;
-        match BatEnum.get e with
+      (match BatEnum.get e with
         | None -> i
         | Some c ->
             (match c with
@@ -56,7 +53,7 @@ struct
     | 'P' -> { letter ='A'; nb =1; pass = true }
     | 'I' -> raise (Vertex_letter_error "I")
     | ('A' .. 'Z' as c) ->
-        { letter = c; pass = false; nb = parse (BatString.enum str) 0; }
+        { letter = c; pass = false; nb = parse (Common.drop_one (BatString.enum str)) 0; }
     | c -> raise (Vertex_letter_error (Char.escaped c))
   
   let is_valid boardSize { letter = l; nb = n; pass = b } =
@@ -96,16 +93,16 @@ struct
       vert = Vertex.vertex_of_string vert;
     }
   
-  let move_of_string_plus str =
-    let {
-      color = c;
-      vert = { Vertex.letter = l; Vertex.nb = n; Vertex.pass = p }
-    } = move_of_string str
-    in
-    {
-      color = c;
-      vert = { Vertex.letter = l; Vertex.nb = n - 1; Vertex.pass = p; };
-    }
+(*  let move_of_string_plus str =                                         *)
+(*    let {                                                               *)
+(*      color = c;                                                        *)
+(*      vert = { Vertex.letter = l; Vertex.nb = n; Vertex.pass = p }      *)
+(*    } = move_of_string str                                              *)
+(*    in                                                                  *)
+(*    {                                                                   *)
+(*      color = c;                                                        *)
+(*      vert = { Vertex.letter = l; Vertex.nb = n - 1; Vertex.pass = p; };*)
+(*    }                                                                   *)
   
 end
 
