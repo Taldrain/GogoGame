@@ -114,7 +114,7 @@ let rec parse_cmd e =
   | 'k' ->
       (match get e with
         | 'n' ->
-            verify e "own"
+            verify e "own_command"
               (fun e -> Known_command ((drop_one e) |> BatString.of_enum))
         | 'o' ->
             verify e "mi"
