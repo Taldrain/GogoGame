@@ -5,23 +5,27 @@ open Protocol
 
 module Formatter =
 struct
-  (** le formatter s'occupe de bien formatter l'output **)
-  
+ (** le formatter s'occupe de bien formatter l'output **)
+
   open Protocol
-  
+
   let catched_id = ref false
   let id = ref (-1)
   let set_id i = catched_id := true; id := i
-  
-  let _id () = if !catched_id then (catched_id := false; (string_of_int !id)) else ""
-  
+
+  let _id () = if !catched_id then (catched_id := false; (string_of_int !id)) else "" 
+  let rec iter_s = function
+      [] -> ""
+    | e::l -> e^(iter_s l)
+
+
   let format = function
     | Success | SuccessID _ -> "="^(_id ())^"\n\n"
-    | SuccessSTR str | SuccessFull (_, str) -> "="^(_id ())^" "^str^"\n\n"
-    | FailureFull(_, str) | Failure str -> "?"^(_id ())^" "^str^"\n\n"
+    | SuccessSTR str | SuccessFull (_,str) -> "="^(_id ())^" "^str^"\n\n"
+    | SuccessLST lst | SuccessLSTID (_,lst) -> "="^(_id ())^" "^(iter_s lst)^"\n\n"
+    | FailureFull(_,str) | Failure str -> "?"^(_id ())^" "^str^"\n\n"
     | Command cmd -> (string_of_command cmd)^"\n"
-    | CommandFull (id, cmd) -> (set_id id; (string_of_command cmd)^"\n")
-  
+    | CommandFull (id,cmd) -> (set_id id; (string_of_command cmd)^"\n")
 end
 
 exception Protocol_error

@@ -97,6 +97,8 @@ type message =
   | SuccessFull of (int * string)
   | SuccessID of int
   | SuccessSTR of string
+  | SuccessLST of string list
+  | SuccessLSTID of (int * string list)
   | FailureFull of (int * string)
   | Failure of string
 

@@ -26,6 +26,8 @@ let gtp_main_loop () =
       | Protocol.SuccessID _ -> ()
       | Protocol.SuccessFull _ -> ()
       | Protocol.SuccessSTR _ -> ()
+      | Protocol.SuccessLST _ -> ()
+      | Protocol.SuccessLSTID _ -> ()
       | Protocol.Failure _ -> ()
       | Protocol.FailureFull _ -> ()
       | Protocol.Command cmd | Protocol.CommandFull (_, cmd) ->
