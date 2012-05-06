@@ -27,15 +27,15 @@ let id_of_node = function
 
 exception Invalid_id of string
 
-let left i = i - 1
-let right i = i + 1
-let up s i = i + s
-let down s i = i - s
+let down i = i - 1
+let up i = i + 1
+let right s i = i + s
+let left s i = i - s
 
 
 let node_of_int bsize i =
-  let up = (up bsize)
-  and down = (down bsize) in
+  let left = (left bsize)
+  and right = (right bsize) in
   let predicates = 
     [
     ((>=) (-1), fun x -> (raise (Invalid_id ((string_of_int i)^":to low"))));       (* on se protege des negatifs *)
@@ -59,11 +59,12 @@ class board boardsize =
   in
   object (self)
     val size = boardsize
-    val mutable is_clear = false
+    val mutable is_clear = true
     val mutable plateau = tmp_plateau
 
     method size = size
     method place_stone move =
+      is_clear <- false;
       let id = Vertex.int_of_vertex size (move.vert) in
       plateau.(id) <- match plateau.(id) with
       | Corner (i, _, n) -> Corner (i, move.color, n)

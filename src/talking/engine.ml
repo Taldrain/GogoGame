@@ -19,7 +19,10 @@ let set_boardsize i =
   else (Globals.board#set (new Board.board i); Success)
 
 let clean_board () = Globals.event_clear#get#raise
-let set_komi f = Globals.komi := f
+
+let set_komi f =
+  try Globals.komi := f; Success
+  with _ -> Failure "syntax error"
 
 (* Input: x et y, deux int en coordonnees
  * Output un move de couleur Noir
@@ -101,7 +104,7 @@ let genmove c =
   let move = AI.genmove c in
   make_a_play move;
   let v = Entities.Vertex.string_of_vertex move.vert in
-    SuccessSTR v
+  SuccessSTR v
 
 (* Appele par place_free_handicap, place les pions d'handicaps manuellement *)
 let rec move_free_handicap i = match i with
@@ -122,6 +125,7 @@ let place_free_handicap i = (*TODO:Placer stone manuellement*)
   else SuccessLST (move_free_handicap i)
 
 let undo () = (b#get#unset_stone (History.undo ()))
+(* TODO faire raffraichir la board par l'IA *)
 
 let action = function
   | Protocol_version -> SuccessSTR "2"
@@ -132,10 +136,11 @@ let action = function
   | List_commands -> SuccessSTR(list_commands ())
   | Boardsize i -> set_boardsize i
   | Clear_board -> clean_board (); Success
-  | Komi f -> set_komi f; Success
+  | Komi f -> set_komi f
   | Fixed_handicap i -> choose_fixed_handicap i
   | Place_free_handicap i -> place_free_handicap i
   | Set_free_handicap l -> set_free_handicap l; Success
   | Play m -> (try (play m; Success) with Illegal_move -> Failure "illegal_move")
   | GenMove c -> genmove c
   | Undo -> undo (); Success
+  | Showboard -> SuccessSTR (Showboard.display b#get)

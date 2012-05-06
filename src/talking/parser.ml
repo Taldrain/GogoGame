@@ -3,35 +3,30 @@ open Batteries_uni
 open Entities
 open Protocol
 
-
 module Formatter =
 struct
-(** le formatter s'occupe de bien formatter l'output **)
+ (** le formatter s'occupe de bien formatter l'output **)
 
-open Protocol
+  open Protocol
 
-let catched_id = ref false
-let id = ref (-1)
-let set_id i = catched_id := true; id := i
+  let catched_id = ref false
+  let id = ref (-1)
+  let set_id i = catched_id := true; id := i
 
-let _id () = if !catched_id then (catched_id := false; (string_of_int !id)) else "" 
+  let _id () = if !catched_id then (catched_id := false; (string_of_int !id)) else "" 
+  let rec iter_s = function
+      [] -> ""
+    | e::l -> e^(iter_s l)
 
-let rec iter_s = function
-    [] -> ""
-  | e::l -> e^(iter_s l)
 
-
-let format = function
-  | Success | SuccessID _ -> "="^(_id ())^"\n\n"
-  | SuccessSTR str | SuccessFull (_,str) -> "="^(_id ())^" "^str^"\n\n"
-  | SuccessLST lst | SuccessLSTID (_,lst) -> "="^(_id ())^" "^(iter_s lst)^"\n\n"
-  | FailureFull(_,str) | Failure str -> "?"^(_id ())^" "^str^"\n\n"
-  | Command cmd -> (string_of_command cmd)^"\n"
-  | CommandFull (id,cmd) -> (set_id id; (string_of_command cmd)^"\n")
-
+  let format = function
+    | Success | SuccessID _ -> "="^(_id ())^"\n\n"
+    | SuccessSTR str | SuccessFull (_,str) -> "="^(_id ())^" "^str^"\n\n"
+    | SuccessLST lst | SuccessLSTID (_,lst) -> "="^(_id ())^" "^(iter_s lst)^"\n\n"
+    | FailureFull(_,str) | Failure str -> "?"^(_id ())^" "^str^"\n\n"
+    | Command cmd -> (string_of_command cmd)^"\n"
+    | CommandFull (id,cmd) -> (set_id id; (string_of_command cmd)^"\n")
 end
-
-
 
 exception Protocol_error
 exception Unknown_command
@@ -70,7 +65,7 @@ let parse_vertex_list e =
       let (h, body) = BatString.split str " " in
       let v = Vertex.vertex_of_string h in
       parse body (v:: l)
-    with Not_found -> (Vertex.vertex_of_string str)::l
+    with Not_found -> (Vertex.vertex_of_string str):: l
   in
   if (BatEnum.count e) = 0 then raise Syntax_error
   else parse (BatString.of_enum e) []
@@ -109,10 +104,13 @@ let rec parse_cmd e =
       verify e "ixed_handicap"
         (fun e -> Fixed_handicap (get_nb (drop_one e)))
   | 'g' ->
-      verify e "enmove"
-        (fun e ->
-              GenMove
-              (((drop_one e) |> BatString.of_enum) |> Color.color_of_string))
+      (match get e with
+        | 'e' -> verify e "nmove"
+              (fun e ->
+                    GenMove
+                    (((drop_one e) |> BatString.of_enum) |> Color.color_of_string))
+        | 'g' -> verify e "g-plop" (fun e -> List_commands)
+        | _ -> raise Unknown_command)
   | 'k' ->
       (match get e with
         | 'n' ->
@@ -146,8 +144,12 @@ let rec parse_cmd e =
         | _ -> raise Unknown_command)
   | 'q' -> verify e "uit" (fun e -> Quit)
   | 's' ->
-      verify e "et_free_handicap"
-        (fun e -> Set_free_handicap (parse_vertex_list e))
+      (match get e with
+        | 'e' -> verify e "t_free_handicap"
+              (fun e -> Set_free_handicap (parse_vertex_list e))
+        | 'h' -> verify e "owboard"
+              (fun e -> Showboard)
+        | _ -> raise Unknown_command)
   | 'u' -> verify e "ndo" (fun e -> Undo)
   | 'v' -> verify e "ersion" (fun e -> Version)
   | _ -> raise Unknown_command

@@ -8,11 +8,6 @@ open Entities.Move
 open Entities.Color
 open Entities.Vertex
 
-let b = Globals.board
-let c = Globals.color
-let cur = ref 0
-let get_id () = (incr cur; !cur)
-
 class group color =
 object (self)
   val mutable stones = []
@@ -23,34 +18,9 @@ object (self)
   method add_stone v =
     (
       stones <- v:: stones;
-      count <- count + 1;
-      self#compute_liberties
+      count <- count + 1
     )
 
   method stones = stones
   method contains s = List.mem s stones
-
-  method compute_liberties =
-    let rec liberties v have_seen =
-      if BatHashtbl.mem !have_seen v then 0
-      else let { color = c; vert = _ } = v
-        in
-        BatHashtbl.add !have_seen v 0;
-        match c with
-        | Empty -> 1
-        | _ -> 0
-    in
-    let rec compute have_seen l accu =
-      match l with
-      | [] -> accu
-      | s:: l -> compute have_seen l (accu + (liberties s have_seen))
-    in
-    let rec iter l have_seen accu =
-      match l with
-      | [] -> accu
-      | s:: l -> let n = Board.get_neighbours b#get s in
-        let n = (BatList.map (fun i -> (b#get#get i) |> Board.color_of_node)) in
-          iter l have_seen (accu + (compute have_seen n 0))
-    in
-    iter stones (ref (BatHashtbl.create 101)) 0
 end
