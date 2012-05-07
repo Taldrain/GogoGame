@@ -26,7 +26,7 @@ speed_test: native
 	@echo "****************************************"
 	$(COMPILE) $(TEST_FLAGS) testing.native
 	@echo "Beginning speed tests..."
-	./testing.native
+	@./testing.native
 	@echo
 	@echo "****************************************"
 
@@ -34,6 +34,8 @@ test: speed_test
 	@echo "****************************************"
 	$(COMPILE) $(TEST_FLAGS) long_testing.native
 	@echo "Beginning long running test..."
+	@./long_testing.native
+	@echo
 	@echo "****************************************"
 
 clean:
