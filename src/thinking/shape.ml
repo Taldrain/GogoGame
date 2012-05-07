@@ -45,9 +45,9 @@ let shapes =
   fun x -> [| (x+2); (x+14); (x+26)  |];
   fun x -> [| (x+2); (x+14); (x+28)  |];
   fun x -> [| (x+12); (x+24); (x+26) |];
-(*lantern procession*)
-  fun x -> [| (x+3); (x+6); (x+9)          |];
-  fun x -> [| (x+3*13); (x+6*13); (x+9*13) |];
+(*(*lantern procession*)                        *)
+(*  fun x -> [| (x+3); (x+6); (x+9)          |];*)
+(*  fun x -> [| (x+3*13); (x+6*13); (x+9*13) |];*)
 (*parallelogram*)
   fun x -> [| (x+2); (x+25); (x+27)  |];
   fun x -> [| (x+2); (x+27); (x+29)  |];

@@ -7,6 +7,10 @@ open Entities.Color
 open Entities.Vertex
 open Entities.Move
 
+let self_init () =
+  Engine.set_boardsize 13;
+  Engine.set_komi 6.5
+
 let classic_openning board =
   let s = board#size in
   let q = Common.letter_of_int (s-3) in

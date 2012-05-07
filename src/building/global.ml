@@ -12,5 +12,6 @@ object (self)
   method name = name
   method isdef = empty
   method opt = if empty then None else Some value
+  method empty = empty
 end
 
