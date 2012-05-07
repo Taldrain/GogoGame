@@ -59,6 +59,7 @@ class board boardsize =
   in
   object (self)
     val size = boardsize
+    val ssize = boardsize*boardsize
     val mutable is_clear = true
     val mutable plateau = tmp_plateau
     val blacks = BatBitSet.create ss
@@ -82,6 +83,10 @@ class board boardsize =
       is_clear <- true
     method is_clear = is_clear
     method unset_stone {color=_;vert=v} = self#place_stone {color=Empty;vert=v}
+    method blacks = blacks
+    method whites = whites
+    method not_empty = (BatBitSet.union blacks whites)
+    method empties = BatBitSet.differentiate_sym (BatBitSet.create ssize) self#not_empty
   end
 
 let get_neighbours b s =

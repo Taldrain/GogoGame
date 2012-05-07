@@ -1,1 +1,1 @@
-<*>: package(batteries)
+<*>: warn_A, inline(1000), package(batteries)

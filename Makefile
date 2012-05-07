@@ -1,8 +1,12 @@
-FLAGS := -use-ocamlfind
-
 # A DECOMMENTER POUR AUGMENTER LA VITESSE
-#FLAGS := $(FLAGS) -noassert
+#NEED_FOR_SPEED := 1
 
+FLAGS := -use-ocamlfind -j 0 -ocamlopt ocamlopt.opt -ocamlc ocamlc.opt -log out.log
+
+ifdef NEED_FOR_SPEED
+	FLAGS := $(FLAGS) -cflags -noassert,-unsafe,-rectypes
+	OPTFLAGS := -cflags -inline,1000,-nodynlink,-ffast-math
+endif
 
 INC := -I src -I src/building -I src/talking -I src/thinking
 PKG := -pkg batteries
