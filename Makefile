@@ -14,7 +14,7 @@ PKG := -pkg batteries
 CC := ocamlbuild
 COMPILE := $(CC) $(FLAGS) $(PKG) $(INC)
 
-TEST_FLAGS := -pkg oUnit -I test
+TEST_FLAGS := -pkg oUnit -I test -I test/utils
 
 all: speed_test
 exe: native

@@ -17,7 +17,7 @@ let g = new global "groups"
 (** stocke les groupes **)
 let count = ref 0
 
-let add e =
+let add (e: group) =
   (if g#empty then g#set (BatDllist.create e)
     else BatDllist.add g#get e);
   incr count
@@ -33,17 +33,12 @@ let find e =
   if current#contains e then Some current
   else rec_find e current (BatDllist.next g#get)
 
-let del e =
-  let rec search_and_destroy e l orig =
-    let current = BatDllist.get l in
-    if current = orig then ()
-    else
-    if current#contains e then (decr count; BatDllist.remove l; ())
-    else search_and_destroy e (BatDllist.next l) orig
-  in
-  let current = BatDllist.get g#get in
-  if current#contains e then (decr count; g#set (BatDllist.drop g#get))
-  else search_and_destroy e (BatDllist.next g#get) current
+(* let del e = let rec search_and_destroy e l orig = let current =         *)
+(* BatDllist.get l in if current = orig then () else if current#contains e *)
+(* then (decr count; BatDllist.remove l; ()) else search_and_destroy e     *)
+(* (BatDllist.next l) orig in let current = BatDllist.get g#get in if      *)
+(* current#contains e then (decr count; g#set (BatDllist.drop g#get)) else *)
+(* search_and_destroy e (BatDllist.next g#get) current                     *)
 
 let compute_liberties () =
   let count = ref 0 in
@@ -63,7 +58,7 @@ let compute_liberties () =
     | [] -> accu
     | e:: l -> apply f (accu + (f e)) l
   in
-  let iter (g:group) =
+  let iter (g: group) =
     let have_seen = (ref (BatHashtbl.create 101)) in
     BatList.Labels.iter g#stones
       ~f: (fun s -> let n = Board.get_neighbours board#get s in
@@ -72,18 +67,21 @@ let compute_liberties () =
               |> (apply (liberties have_seen) 0)
               |> ((+) !count)))
   in
-  BatDynArray.iter iter g#get
+  BatDllist.iter iter g#get
+
+let rec del e = try ((BatDllist.find ((=) e) g#get) |> BatDllist.remove)
+      with Not_found -> ()
 
 let merge_groups color id l =
   let rec merge id accu = function
     | [] -> accu
-    | e:: l -> (match find e with
+    | (i,c):: l -> (match find i with
           | Some g -> merge id (g:: accu) l
           | None -> merge id accu l)
   in
   let rec get_stones accu = function
     | [] -> BatList.flatten accu
-    | g:: l -> get_stones (g#get_stones:: accu) l
+    | g:: l -> get_stones (g#stones:: accu) l
   in
   let to_merge = merge id [] l in
   let stones = get_stones [] to_merge in
@@ -99,8 +97,8 @@ let refresh_groups m =
   let id = Vertex.int_of_vertex b#size m.vert in
   id
   |> (Board.get_neighbours b)
-  |> (BatList.map (fun i -> (b#get i) |> Board.color_of_node))
-  |> (BatList.filter (fun c -> c = m.color))
+  |> (BatList.map (fun i -> (i,((b#get i) |> Board.color_of_node))))
+  |> (BatList.filter (fun (i,c) -> c = m.color))
   |> (merge_groups m.color id)
 
 let _ =
