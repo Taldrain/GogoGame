@@ -54,22 +54,28 @@ let node_of_int bsize i =
   switchF default predicates i
 
 class board boardsize =
-  let node_of_int = (node_of_int boardsize) in
-  let tmp_plateau = Array.init (boardsize * boardsize) node_of_int
+  let node_of_int = (node_of_int boardsize) and ss = (boardsize * boardsize) in
+  let tmp_plateau = Array.init ss node_of_int
   in
   object (self)
     val size = boardsize
     val mutable is_clear = true
     val mutable plateau = tmp_plateau
+    val blacks = BatBitSet.create ss
+    val whites = BatBitSet.create ss
 
     method size = size
     method place_stone move =
       is_clear <- false;
       let id = Vertex.int_of_vertex size (move.vert) in
-      plateau.(id) <- match plateau.(id) with
+      ((plateau.(id) <- match plateau.(id) with
       | Corner (i, _, n) -> Corner (i, move.color, n)
       | Border (i, _, n) -> Border (i, move.color, n)
-      | Middle (i, _, n) -> Middle (i, move.color, n)
+      | Middle (i, _, n) -> Middle (i, move.color, n));
+        match move.color with
+          | Black -> BatBitSet.set blacks id
+          | White -> BatBitSet.set whites id
+          | Empty -> (BatBitSet.unset blacks id; BatBitSet.unset whites id))
     method get id = plateau.(id)
     method clear =
       plateau <- Array.init (boardsize * boardsize) node_of_int;
