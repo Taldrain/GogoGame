@@ -5,6 +5,9 @@ note : ne DOIT pas avoir de dependance a un autre fichier du programme
 **)
 open Batteries_uni
 
+exception Quit_signal
+
+
 (** retourne la valeur numerique d'un char numerique
 @param c: char un char digital tel '2'
 @return la valeur numerique de ce char

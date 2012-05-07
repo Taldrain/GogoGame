@@ -7,10 +7,10 @@
 *
 *************************************************************************)
 open Batteries_uni
-
-exception Quit_signal
+open Common
 
 let clean_exit () =
+  print_string ("="^(Parser.Formatter._id ())^"\n\n");
   Pervasives.exit 0
 
 let failure str =
