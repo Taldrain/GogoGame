@@ -1,5 +1,5 @@
 # A DECOMMENTER POUR AUGMENTER LA VITESSE
-NEED_FOR_SPEED := 1
+#NEED_FOR_SPEED := 1
 
 FLAGS := -use-ocamlfind -j 0 -ocamlopt ocamlopt.opt -ocamlc ocamlc.opt -log out.log
 
@@ -28,7 +28,8 @@ debug:
 
 speed_test: native
 	@echo "****************************************"
-	$(COMPILE) $(TEST_FLAGS) testing.native
+	@echo "Compiling regression test..."
+	@$(COMPILE) $(TEST_FLAGS) -quiet testing.native
 	@echo "Beginning speed tests..."
 	@./testing.native
 	@echo
@@ -36,7 +37,8 @@ speed_test: native
 
 test: speed_test
 	@echo "****************************************"
-	$(COMPILE) $(TEST_FLAGS) long_testing.native
+	@echo "Compiling long running test..."
+	@$(COMPILE) $(TEST_FLAGS) -quiet long_testing.native
 	@echo "Beginning long running test..."
 	@./long_testing.native
 	@echo

@@ -80,13 +80,28 @@ let merge_groups color l =
     add g
   )
 
+let find_common l =
+  let rec find_groups ids groups =
+    match ids with
+    | [] -> groups
+    | id:: ids ->
+        try
+          let g = find id in
+          if List.mem g groups then find_groups ids groups
+          else find_groups ids (g:: groups)
+        with Not_found ->
+            failwith "Group_manager.find_common [FATAL]: stone without group found"
+  in
+  find_groups l []
+
 let refresh_groups m =
   let b = board#get in
   let id = Vertex.int_of_vertex b#size m.vert in
   id
   |> (Board.get_neighbours b)
   |> (BatList.map (fun i -> (i, ((b#get i) |> Board.color_of_node))))
-  |> (BatList.filter (fun (i, c) -> c = m.color))
+  |> (BatList.filter_map (fun (i, c) -> if c = m.color then Some i else None))
+  |> (find_common)
   |> (merge_groups m.color)
 
 let _ =
