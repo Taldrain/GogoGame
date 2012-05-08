@@ -136,7 +136,7 @@ let action = function
   | Protocol_version -> SuccessSTR "2"
   | Name -> SuccessSTR "Gogo Game"
   | Version -> SuccessSTR "3.14"
-  | Quit -> Success
+  | Quit -> raise Common.Quit_signal
   | Known_command s -> SuccessSTR "true"
   | List_commands -> SuccessSTR(list_commands ())
   | Boardsize i -> set_boardsize i

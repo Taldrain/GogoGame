@@ -10,10 +10,11 @@ Tests de regression effectues a chaque build
 
 open OUnit
 
-let main_suite = "main test suite" >:::
+let main_suite = "_" >:::
   [
   ParserTest_pos.suite ();
-  BoardTest_pos.suite ()
+  BoardTest_pos.suite ();
+  Group_managerTest_pos.suite ()
   ]
 
 let _ =

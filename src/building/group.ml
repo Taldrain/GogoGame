@@ -8,14 +8,17 @@ open Entities.Move
 open Entities.Color
 open Entities.Vertex
 
-class group color =
+let id = ref 0
+let get_id () = (incr id;!id)
+
+class group (color:Entities.Color.t) =
 object (self)
   val mutable stones = []
   val mutable count = 0
   val c = color
   val id = get_id ()
 
-  method add_stone v =
+  method add_stone (v:int) =
     (
       stones <- v:: stones;
       count <- count + 1

@@ -7,12 +7,11 @@
 *
 *************************************************************************)
 open Batteries_uni
-
-let end_game = ref false
-exception Quit_signal
+open Common
 
 let clean_exit () =
-  end_game := true
+  print_string ("="^(Parser.Formatter._id ())^"\n\n");
+  Pervasives.exit 0
 
 let failure str =
   (let output = (Parser.Formatter.format (Protocol.Failure str))
@@ -40,7 +39,7 @@ let gtp_main_loop () =
   | Parser.Unknown_command -> failure "unknown command"
 
 let _ =
-  while not !end_game
+  while true
   do
     try gtp_main_loop () with Quit_signal -> clean_exit ()
   done
