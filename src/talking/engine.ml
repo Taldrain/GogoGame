@@ -25,11 +25,10 @@ let set_komi f =
   with _ -> Failure "syntax error"
 
 (* Input: x et y, deux int en coordonnees
- * Output un move de couleur Noir
+ * Output un move de couleur Noir (un handicap est toujours noir)
  *)
-let make_mv x y =
-  move_of_string("Black "^string_of_vertex(
-    vertex_of_int b#get#size (x*b#get#size+y)))
+let make_mv x y = 
+  { color = Black;vert = (vertex_of_int b#get#size (x*b#get#size+y))}
 
 (* Input: taille de la board, nbr d'handicap
  * Output: list des moves d'handicaps
@@ -89,14 +88,20 @@ let choose_fixed_handicap i =
 
 (* Input: liste de vertices
  * Function GTP, place la liste de vertices passe in input
- * Amelioration: checker le nbr d'element de la liste, normalement correct
  *)
-let rec set_free_handicap l = match l with 
-    [] -> ()
-  | e::l -> let m = move_of_string("Black "^(string_of_vertex e)) in
-      b#get#place_stone m;
-      AI.refresh_groups m;
-      set_free_handicap l
+let rec set_free_handicap l =
+  if not b#get#is_clear then Failure "board not empty"
+  else if List.length l >= (b#get#size * b#get#size) then Failure "bad vertex list"
+  else if List.length l < 2 then Failure "bad vertex list"
+  else
+    let rec foo = function
+        [] -> ()
+      | e::l -> let m = {color = Black;vert = e} in
+                b#get#place_stone m;
+                AI.refresh_groups m;
+                foo l
+    in foo l;
+       Success
 
 let play m = make_a_play m
 let genmove c =
@@ -139,7 +144,7 @@ let action = function
   | Komi f -> set_komi f
   | Fixed_handicap i -> choose_fixed_handicap i
   | Place_free_handicap i -> place_free_handicap i
-  | Set_free_handicap l -> set_free_handicap l; Success
+  | Set_free_handicap l -> set_free_handicap l
   | Play m -> (try (play m; Success) with Illegal_move -> Failure "illegal_move")
   | GenMove c -> genmove c
   | Undo -> undo (); Success
