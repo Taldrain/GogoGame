@@ -147,9 +147,9 @@ let reverse_allongement () = (* setup *)
      (Playing.play_v ~vertices: [ v1; v2; v3 ];
       test_count ~expected: 1;
       are_in_same_group ~color: Black ~vertices: [ v1; v2; v3 ]))
-  
+
 let test_fusion () = todo "not yet"
-  
+
 let suite () =
   "groupes" >:::
     [ "groupes monoides" >:::

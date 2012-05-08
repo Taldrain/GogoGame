@@ -10,6 +10,9 @@ struct
   exception Color_invalid_color
   
   let color_of_string str =
+    if BatString.is_empty str
+    then failwith "Entities.Vertex.color_of_string: string empty !"
+    else
     match str.[0] with
     | 'w' | 'W' -> White
     | 'b' | 'B' -> Black
@@ -41,6 +44,9 @@ struct
     if b then "pass" else (Char.escaped l) ^ (string_of_int (n + 1))
   
   let vertex_of_string str =
+    if BatString.is_empty str
+    then failwith "Entities.Vertex.color_of_string: string empty !"
+    else
     let rec parse e i =
       (match BatEnum.get e with
         | None -> i
