@@ -10,6 +10,12 @@ open Board
 open Globals
 
 
+let refresh_groups move =
+  let {color=c; vert={pass=p;nb=n;letter=l}} = move in
+  if p then ()
+  else
+    (Group_manager.add (new Group.group c);
+    Group_manager.refresh_groups move)
 
 let genmove c =
   let b = board#get in
@@ -23,5 +29,3 @@ let genmove c =
 let _ =
   let event_clear = Globals.event_clear#get in
   event_clear#add_handler (fun () -> Globals.board#get#clear)
-
-let refresh_groups move = ()

@@ -1,10 +1,10 @@
 # A DECOMMENTER POUR AUGMENTER LA VITESSE
-#NEED_FOR_SPEED := 1
+NEED_FOR_SPEED := 1
 
 FLAGS := -use-ocamlfind -j 0 -ocamlopt ocamlopt.opt -ocamlc ocamlc.opt -log out.log
 
 ifdef NEED_FOR_SPEED
-	FLAGS := $(FLAGS) -cflags -noassert,-unsafe,-rectypes -tag incline(1000)
+	FLAGS := $(FLAGS) -cflags -noassert,-unsafe,-rectypes -tag "incline(1000)"
 	OPTFLAGS := -cflags -nodynlink,-ffast-math
 endif
 

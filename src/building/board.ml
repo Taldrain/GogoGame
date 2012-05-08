@@ -78,10 +78,10 @@ class board boardsize =
           | White -> BatBitSet.set whites id
           | Empty -> (BatBitSet.unset blacks id; BatBitSet.unset whites id))
       with Invalid_argument _ ->
-          raise (Invalid_argument (Printf.sprintf "board.place_stone: index out of bounds (%d)" id))
+          invalid_arg (Printf.sprintf "board.place_stone: index out of bounds (%d)" id)
     method get id = try plateau.(id)
       with Invalid_argument _ ->
-          raise (Invalid_argument (Printf.sprintf "board.get: index out of bounds (%d)" id))
+          invalid_arg (Printf.sprintf "board.get: index out of bounds (%d)" id)
     method clear =
       plateau <- Array.init (boardsize * boardsize) node_of_int;
       is_clear <- true

@@ -11,7 +11,7 @@ struct
   
   let color_of_string str =
     if BatString.is_empty str
-    then failwith "Entities.Vertex.color_of_string: string empty !"
+    then invalid_arg "Entities.Vertex.color_of_string: string empty !"
     else
     match str.[0] with
     | 'w' | 'W' -> White

@@ -33,13 +33,6 @@ let find e =
   if current#contains e then Some current
   else rec_find e current (BatDllist.next g#get)
 
-(* let del e = let rec search_and_destroy e l orig = let current =         *)
-(* BatDllist.get l in if current = orig then () else if current#contains e *)
-(* then (decr count; BatDllist.remove l; ()) else search_and_destroy e     *)
-(* (BatDllist.next l) orig in let current = BatDllist.get g#get in if      *)
-(* current#contains e then (decr count; g#set (BatDllist.drop g#get)) else *)
-(* search_and_destroy e (BatDllist.next g#get) current                     *)
-
 let compute_liberties () =
   let count = ref 0 in
   let rec liberties have_seen (c, i) =
@@ -69,26 +62,21 @@ let compute_liberties () =
   in
   BatDllist.iter iter g#get
 
-let rec del e = try ((BatDllist.find ((=) e) g#get) |> BatDllist.remove)
-      with Not_found -> ()
+let rec del e =
+  try ((BatDllist.find ((=) e) g#get) |> BatDllist.remove; decr count)
+  with Not_found -> ()
 
-let merge_groups color id l =
-  let rec merge id accu = function
-    | [] -> accu
-    | (i,c):: l -> (match find i with
-          | Some g -> merge id (g:: accu) l
-          | None -> merge id accu l)
+let merge_groups color l =
+  let groups_to_merge = BatList.filter_map identity l in
+  let stones_to_group =
+    groups_to_merge
+    |> BatList.map (fun g -> g#stones)
+    |> BatList.concat
   in
-  let rec get_stones accu = function
-    | [] -> BatList.flatten accu
-    | g:: l -> get_stones (g#stones:: accu) l
-  in
-  let to_merge = merge id [] l in
-  let stones = get_stones [] to_merge in
   (
-    List.iter del to_merge;
+    List.iter del groups_to_merge;
     let g = new Group.group color in
-    List.iter g#add_stone stones;
+    List.iter g#add_stone stones_to_group;
     add g
   )
 
@@ -97,9 +85,9 @@ let refresh_groups m =
   let id = Vertex.int_of_vertex b#size m.vert in
   id
   |> (Board.get_neighbours b)
-  |> (BatList.map (fun i -> (i,((b#get i) |> Board.color_of_node))))
-  |> (BatList.filter (fun (i,c) -> c = m.color))
-  |> (merge_groups m.color id)
+  |> (BatList.map (fun i -> (i, ((b#get i) |> Board.color_of_node))))
+  |> (BatList.filter (fun (i, c) -> c = m.color))
+  |> (merge_groups m.color)
 
 let _ =
   let event_clear = Globals.event_clear#get in

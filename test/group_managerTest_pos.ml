@@ -19,7 +19,7 @@ let test_count ~expected =
   let count = !Group_manager.count
   in
     assert_bool
-      (sprintf "nombre de groupes detectes incorrect (count a %d)" count)
+      (sprintf "nombre de groupes detectes incorrect (count a %d, attendu %d)" count expected)
       (count = expected)
   
 let test_monoids ~vertices =
