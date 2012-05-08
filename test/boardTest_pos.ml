@@ -44,10 +44,10 @@ let suite () =
   "Board class" >:::
   [ "remplissage" >::
   (fun () -> "exception lors du remplissage" @? (test_fill_board (); true));
-  "vider" >::
+  (*"vider" >::
   (fun () -> "board n'a pas été vidée" @?
-        (bracket (fun () -> fill_board 30) empty_board (fun b -> b#is_clear) ()));
-  "get_all" >::
+        (bracket (fun () -> fill_board 30) empty_board (fun b -> b#is_clear) ()));*)
+  (*"get_all" >::
   (fun () -> "impossible d'acceder a la totalite du plateau" @?
         (bracket (fun () -> fill_board (default_size * default_size))
-            get_all (fun b -> true) ())) ]
+            get_all (fun b -> true) ()))*)]

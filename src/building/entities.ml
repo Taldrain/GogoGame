@@ -45,7 +45,7 @@ struct
   
   let vertex_of_string str =
     if BatString.is_empty str
-    then failwith "Entities.Vertex.color_of_string: string empty !"
+    then failwith "Entities.Vertex.vertex_of_string: string empty !"
     else
     let rec parse e i =
       (match BatEnum.get e with

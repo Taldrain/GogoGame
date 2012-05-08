@@ -145,7 +145,7 @@ let rec parse_cmd e =
   | 'q' -> verify e "uit" (fun e -> Quit)
   | 's' ->
       (match get e with
-        | 'e' -> verify e "t_free_handicap"
+        | 'e' -> verify e "t_free_handicap " (* wut *)
               (fun e -> Set_free_handicap (parse_vertex_list e))
         | 'h' -> verify e "owboard"
               (fun e -> Showboard)

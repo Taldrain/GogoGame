@@ -96,7 +96,7 @@ let rec set_free_handicap l =
   else
     let rec foo = function
         [] -> ()
-      | e::l -> let m = {color = Black;vert = e} in
+      | e::l -> let m = {color = Black ; vert = e} in
                 b#get#place_stone m;
                 AI.refresh_groups m;
                 foo l
