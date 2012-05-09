@@ -12,10 +12,10 @@ let rec get_next board =
   let s = board#size in
   if !last = 0 then (last := s*s-1;collumn := !last) else ();
   match board#get !last with
-    | Middle (i,_,(_,_,_,r)) -> last := i; board#get r
+    | Middle (i,_,(_,_,_,r)) -> last := i; board#get r (* aucun appel ici ?*)
     | Corner (i,_,(_,r)) | Border (i,_,(_,_,r))
       -> if i mod s = 0 then (last := !collumn; get_next board)
-         else (last := i; board#get r)
+         else (last := i; board#get r) (* /!\, out_of_bound, r > (s*s)*)
 
 
 let fill buffer board =

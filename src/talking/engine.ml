@@ -34,13 +34,13 @@ let make_mv x y =
  * Output: list des moves d'handicaps
  *)
 let make_list_handicap b n =
-  let dist = if b < 12 then 3 else 4 in
+  let dist = if b < 12 then 3 else 3 in
   let lst = ref[] in
     for i = 1 to n do
       match i with
         | 1 -> lst := (make_mv dist dist) :: !lst
-        | 2 -> lst := (make_mv (b-dist) (b-dist)) :: !lst
-        | 3 -> lst := (make_mv dist (b-dist)) :: !lst
+        | 2 -> lst := (make_mv (b-dist) (b-dist-1)) :: !lst
+        | 3 -> lst := (make_mv dist (b-dist-1)) :: !lst
         | 4 -> lst := (make_mv (b-dist) dist) :: !lst
         | 5 -> lst := (make_mv (b/2) (b/2)) :: !lst
         | 6 -> lst := List.tl !lst;
@@ -49,7 +49,7 @@ let make_list_handicap b n =
         | 7 -> lst := (make_mv (b/2) (b/2)) :: !lst
         | 8 -> lst := List.tl !lst;
                lst := (make_mv (b/2) dist) :: !lst;
-               lst := (make_mv (b/2) (b-dist)) :: !lst
+               lst := (make_mv (b/2) (b-dist-1)) :: !lst
         | _ -> lst := (make_mv (b/2) (b/2)) :: !lst
     done;
     !lst
