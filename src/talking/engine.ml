@@ -58,14 +58,16 @@ let make_a_play m =
   let b = b#get in
   b#place_stone m;
   History.play m;
+  if move_is_a_pass m then Globals.last_is_pass#set true
+  else Globals.last_is_pass#set false;
   AI.refresh_groups m
     
 (* Input: list de move
  * Output: Place les pions sans mettre a jour l'historique -> gtp
  *)
-let rec make_play_handicap = function
-    [] -> ()
-  | e::l -> b#get#place_stone e; AI.refresh_groups e; make_play_handicap l
+let rec make_play_handicap e =
+  b#get#place_stone e;
+  AI.refresh_groups e
 
 (* Input: nbr d'handicap
  * Function GTP, check le nombre de pions d'handicaps a placer
@@ -80,7 +82,7 @@ let choose_fixed_handicap i =
   else if (b#get#size < 7) then Failure "invalid number of stones"
   else
     let lst = make_list_handicap b#get#size i in
-    make_play_handicap lst;
+    List.iter make_play_handicap lst;
     let rec foo = function
         [] -> []
       | e::l -> (string_of_vertex e.vert) :: foo l

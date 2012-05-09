@@ -8,6 +8,7 @@ open Global
 let board = new global "board"
 let last_played = new global "last_played"
 let color = new global "color"
+let last_is_pass = new global "last_is_pass"
 
 let komi = ref 0.
 
@@ -20,6 +21,7 @@ struct
   let init_board () = board#set (new Board.board 7)
   let init_last_played () = last_played#set 0
   let init_color () = color#set (Entities.Color.color_of_string "B")
+  let init_last_is_pass () = last_is_pass#set false
 end
 
 let _ =

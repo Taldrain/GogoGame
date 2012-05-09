@@ -69,3 +69,8 @@ let a = switch 0 [(1, ((+) 2))] 2
 let div_eucl a b =
   let rec div a b q = if a < b then (q, a) else div (a - b) b (q +1)
   in div a b 0
+
+let bitset_set_nth b n =
+   let b = BatBitSet.copy b in (BatBitSet.put b true n;b)
+let bitset_unset_nth b n =
+   let b = BatBitSet.copy b in (BatBitSet.put b false n;b)

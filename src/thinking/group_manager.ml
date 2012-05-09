@@ -99,8 +99,9 @@ let refresh_groups m =
   let id = Vertex.int_of_vertex b#size m.vert in
   id
   |> (Board.get_neighbours b)
-  |> (BatList.map (fun i -> (i, ((b#get i) |> Board.color_of_node))))
-  |> (BatList.filter_map (fun (i, c) -> if c = m.color then Some i else None))
+  |> (BatList.filter_map (fun i ->
+            if m.color = ((b#get i) |> Board.color_of_node)
+            then Some i else None))
   |> (find_common)
   |> (merge_groups m.color)
 

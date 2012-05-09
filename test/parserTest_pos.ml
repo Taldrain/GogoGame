@@ -37,9 +37,10 @@ let suite () =
         (Protocol.Place_free_handicap 3));
       ("set_free_handicap", "set_free_handicap A1 B2 C3",
         (Protocol.Set_free_handicap
-          [ { letter = 'A'; nb = 1; pass = false; };
+        (* penser a inverser l'ordre des vertices pour eviter faux negatif *)
+          [{ letter = 'C'; nb = 3; pass = false; } ;
           { letter = 'B'; nb = 2; pass = false; };
-          { letter = 'C'; nb = 3; pass = false; } ]));
+          { letter = 'A'; nb = 1; pass = false; } ]));
       ("play_classic", "play B F5",
         (Protocol.Play
           { color = Black; vert = { letter = 'F'; nb = 5; pass = false; };

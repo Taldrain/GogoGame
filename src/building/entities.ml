@@ -13,10 +13,10 @@ struct
     if BatString.is_empty str
     then invalid_arg "Entities.Vertex.color_of_string: string empty !"
     else
-    match str.[0] with
-    | 'w' | 'W' -> White
-    | 'b' | 'B' -> Black
-    | _ -> raise Color_invalid_color
+      match str.[0] with
+      | 'w' | 'W' -> White
+      | 'b' | 'B' -> Black
+      | _ -> raise Color_invalid_color
   
   let string_of_color =
     function
@@ -29,7 +29,11 @@ struct
     | White -> "W"
     | Black -> "B"
     | Empty -> raise Color_invalid_color
-  
+
+  let invert_color = function
+    | White -> Black
+    | Black -> White
+    | Empty -> Empty
 end
 
 module Vertex =
@@ -40,6 +44,8 @@ struct
   
   exception Vertex_number_error of char
   
+  let v ?(p=false) ~n ~l = { pass=p; nb=n; letter=l }
+  
   let string_of_vertex { letter = l; nb = n; pass = b } =
     if b then "pass" else (Char.escaped l) ^ (string_of_int (n + 1))
   
@@ -47,20 +53,20 @@ struct
     if BatString.is_empty str
     then failwith "Entities.Vertex.vertex_of_string: string empty !"
     else
-    let rec parse e i =
-      (match BatEnum.get e with
-        | None -> i
-        | Some c ->
-            (match c with
-              | '0' .. '9' -> parse e ((i * 10) + (Common.int_of_char c))
-              | c -> raise (Vertex_number_error c)))
-    in
-    match Char.uppercase str.[0] with
-    | 'P' -> { letter ='A'; nb =1; pass = true }
-    | 'I' -> raise (Vertex_letter_error "I")
-    | ('A' .. 'Z' as c) ->
-        { letter = c; pass = false; nb = parse (Common.drop_one (BatString.enum str)) 0; }
-    | c -> raise (Vertex_letter_error (Char.escaped c))
+      let rec parse e i =
+        (match BatEnum.get e with
+          | None -> i
+          | Some c ->
+              (match c with
+                | '0' .. '9' -> parse e ((i * 10) + (Common.int_of_char c))
+                | c -> raise (Vertex_number_error c)))
+      in
+      match Char.uppercase str.[0] with
+      | 'P' -> { letter ='A'; nb =1; pass = true }
+      | 'I' -> raise (Vertex_letter_error "I")
+      | ('A' .. 'Z' as c) ->
+          { letter = c; pass = false; nb = parse (Common.drop_one (BatString.enum str)) 0; }
+      | c -> raise (Vertex_letter_error (Char.escaped c))
   
   let is_valid boardSize { letter = l; nb = n; pass = b } =
     b ||
@@ -70,6 +76,8 @@ struct
   let int_of_vertex bsize v =
     if v.pass then (-1) else (bsize * (int_of_letter v.letter)) + v.nb
   
+  let int_of_v = (int_of_vertex 13)
+  
   let vertex_of_int bsize i =
     let (q, r) = div_eucl i bsize
     in
@@ -77,6 +85,8 @@ struct
     with
     | Invalid_alphabet_of_int ->
         raise (Vertex_letter_error (string_of_int q))
+  
+  let vertex_is_a_pass { nb = _; letter = _; pass = p } = p
   
 end
 
@@ -99,16 +109,11 @@ struct
       vert = Vertex.vertex_of_string vert;
     }
   
-(*  let move_of_string_plus str =                                         *)
-(*    let {                                                               *)
-(*      color = c;                                                        *)
-(*      vert = { Vertex.letter = l; Vertex.nb = n; Vertex.pass = p }      *)
-(*    } = move_of_string str                                              *)
-(*    in                                                                  *)
-(*    {                                                                   *)
-(*      color = c;                                                        *)
-(*      vert = { Vertex.letter = l; Vertex.nb = n - 1; Vertex.pass = p; };*)
-(*    }                                                                   *)
+  let move_is_a_pass { color = _; vert = v } = Vertex.vertex_is_a_pass v
+  
+  (* let move_of_string_plus str = let { color = c; vert = { Vertex.letter = *)
+  (* l; Vertex.nb = n; Vertex.pass = p } } = move_of_string str in { color = *)
+  (* c; vert = { Vertex.letter = l; Vertex.nb = n - 1; Vertex.pass = p; }; } *)
   
 end
 

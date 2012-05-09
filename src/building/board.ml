@@ -94,8 +94,7 @@ class board boardsize =
   end
 
 let get_neighbours b s =
-  let id = b#get s in
-  match id with
+  match b#get s with
   | Corner(_, _, (c1, c2)) -> c1:: c2::[]
   | Border(_, _, (c1, c2, c3)) -> c1:: c2:: c3::[]
   | Middle(_, _, (c1, c2, c3, c4)) -> c1:: c2:: c3:: c4::[]
