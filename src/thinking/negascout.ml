@@ -30,7 +30,6 @@ let state color black white group shape move score =
 let groups_refresh g = g
 let shapes_refresh s = s
 
-
 (* setup *)
 let depth = 3
 
@@ -43,7 +42,19 @@ let i_want_to_pass = false
 
 let is_end s = Globals.last_is_pass#get && i_want_to_pass
 
-let eval (blacks,whites,groups,shapes,{color=c;vert=v}) = 10
+l
+let eval_cell i =
+  let m = i mod 13 in
+  match (i,m) with
+  | (0,_) | (12,_) | (156,_) | (169,_) -> -30 (* coins *)
+  | (i,_) when i < 12 | (i,_) when i > 156 | (_,0) -> -10 (* bord *)
+  | (i,_) when i < 29 | (i,_) when i > 141 | (_,1) -> 5 (* ligne du territoire *)
+  | (i,_) when i < 40 | (i,_) when i > 133 | (_,2) -> 10 (* ligne de la victoire *)
+  | _ -> 0
+
+let eval (last_score,blacks,whites,groups,shapes,c,id) =
+  let score = ref 0 in
+ 
 
 let generate_next s =
   let empties =
@@ -64,13 +75,12 @@ let generate_next s =
       and s = shapes_refresh s.shp
       and m = {color=s.col;vert=(vertex_of_int i)}
       in
-      let score = eval (blacks,whites,g,s)
+      let score = eval (s.scr,blacks,whites,g,s)
       in
-      gen (next_empty i) (sort_and_push (state (invert_color s.col) black white g s
+      gen (next_empty i) (BatHeap.insert accu (state black white g s
         {color=s.col;vert=(vertex_of_int i)} score))
   in
-  gen (next_empty 0) (BatEnum.empty ())
-
+  gen (next_empty 0) (BatHeap.empty)
 
 
 let rec negascout depth alpha beta state =
@@ -95,7 +105,7 @@ let rec negascout depth alpha beta state =
   else
     (first_child := true;
       (let b = beta
-        
+
         and children = generate_next state
         in
         try BatEnum.iter (main depth b beta alpha) children

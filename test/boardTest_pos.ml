@@ -85,8 +85,9 @@ let test_neighbours () =
   in
   (* test *)
   skip_if true "test incomprehensible";
+
   test_eq ~msg:"milieu" ~stone:lst.(0) ~expected:m_neigh;
-  (* test_eq ~msg:"bordure" ~stone:lst.(1) ~expected:b_neigh; *)
+  test_eq ~msg:"bordure" ~stone:lst.(1) ~expected:b_neigh;
   test_eq ~msg:"coin" ~stone:lst.(2) ~expected:c_neigh
 
 let suite () =
