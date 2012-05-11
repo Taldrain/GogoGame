@@ -14,8 +14,10 @@ let refresh_groups move =
   let {color=c; vert={pass=p;nb=n;letter=l}} = move in
   if p then ()
   else
-    (Group_manager.add (new Group.group c);
-    Group_manager.refresh_groups move)
+		if c = Black then
+    (Group_again.make_group (int_of_vertex 13 ({pass=p;nb=n;letter=l})) board#get#blacks)
+		else
+		(Group_again.make_group (int_of_vertex 13 ({pass=p;nb=n;letter=l})) board#get#whites)
 
 let genmove c =
   let b = board#get in
