@@ -63,7 +63,7 @@ class board boardsize =
     val mutable plateau = tmp_plateau
     val blacks = BatBitSet.create ss
     val whites = BatBitSet.create ss
-    
+
     method size = size
     method place_stone move =
       let id = Vertex.int_of_vertex size (move.vert) in

@@ -6,26 +6,8 @@ open Entities.Color
 open Entities.Vertex
 open Entities.Move
 
-type state =
-  {
-    col : Color.t;
-    blk : BatBitSet.t;
-    wht : BatBitSet.t;
-    grp : BatList.t;
-    shp : BatList.t;
-    mov : Move.t;
-    scr : BatArray.t
-  }
+open AlgoUtils
 
-let state color black white group shape move score =
-  {
-    blk = black;
-    wht = white;
-    grp = group;
-    shp = shape;
-    mov = move;
-    scr = score;
-  }
 (* TODO *)
 let groups_refresh g = g
 let shapes_refresh s = s
@@ -56,31 +38,7 @@ let eval (last_score,blacks,whites,groups,shapes,c,id) =
   let score = ref 0 in
  
 
-let generate_next s =
-  let empties =
-    (BatBitSet.union s.blk s.wht) |>
-    (BatBitSet.differentiate (BatBitSet.create_full ss))
-  in
-  let rec next_empty i =
-    if not (BatBitSet.is_set empties (i+1)) then next_empty (i+2) else (i+1)
-  in
-  let rec gen i accu =
-    if i = ss then accu
-    else
-      let (blacks, whites) =
-        if s.col = Black
-        then (bitset_set_nth s.blk i, s.wht)
-        else (s.bk, bitset_set_nth s.wht i)
-      and g = groups_refresh s.grp
-      and s = shapes_refresh s.shp
-      and m = {color=s.col;vert=(vertex_of_int i)}
-      in
-      let score = eval (s.scr,blacks,whites,g,s)
-      in
-      gen (next_empty i) (BatHeap.insert accu (state black white g s
-        {color=s.col;vert=(vertex_of_int i)} score))
-  in
-  gen (next_empty 0) (BatHeap.empty)
+let generate_next s = AlgoUtils.generate_next s
 
 
 let rec negascout depth alpha beta state =
