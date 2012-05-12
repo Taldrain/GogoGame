@@ -18,7 +18,7 @@ module Hidden =
 struct
   (* ces fonctions ne sont la que pour aider le compilo a determiner le    *)
   (* type                                                                  *)
-  let init_board () = board#set (new Board.board 7)
+  let init_board () = board#set (new Board.board 7) 
   let init_last_played () = last_played#set 0
   let init_color () = color#set (Entities.Color.color_of_string "B")
   let init_last_is_pass () = last_is_pass#set false

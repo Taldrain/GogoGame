@@ -55,6 +55,8 @@ let make_list_handicap b n =
     !lst
 
 let make_a_play m =
+  let {color = c ; vert = v} = m in
+  Globals.color#set c; 
   let b = b#get in
   b#place_stone m;
   History.play m;
