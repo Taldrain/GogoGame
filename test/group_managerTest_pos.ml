@@ -12,7 +12,11 @@ open Entities.Move
 open Entities.Vertex
   
 open Entities.Color
-  
+
+open Board
+
+open Globals
+
 open Group
   
 let test_count ~expected =
@@ -26,13 +30,13 @@ let test_monoids ~vertices =
   let vertices = List.map (int_of_vertex 13) vertices
   in
     assert_bool "groupes mal detecte (pierres non trouvable dans la liste)"
-      (List.for_all (fun m -> (Group_again.group_of_stone m) <> Group_again.group_zero) vertices)
+      (List.for_all (fun m -> (Group_again.group_of_stone m) <> Group_again.group_zero ()) vertices)
   
 let are_in_same_group ~color ~vertices =
   let vertices = List.map (int_of_vertex 13) vertices in
-  let g = ref (new group color)
-
-  and set = ref false
+  (Group_again.make_group (List.hd vertices) (BatBitSet.union board#get#blacks board#get#whites));
+  let g = ref (Group_again.group_of_stone (List.hd vertices)) in
+  let set = ref false
   in
     assert_bool
       "groupes mal fusionnes (pierres ne sont pas dans le meme groupe)"
@@ -40,9 +44,8 @@ let are_in_same_group ~color ~vertices =
          (fun m ->
             let find = Group_again.group_of_stone m
             in
-              (find <> Group_again.group_zero) &&
-                (let (Some find) = find
-                 in if !set then (g := find; true) else !g = find))
+              (find <> Group_again.group_zero ()) &&
+                (if !set then (g := find; true) else !g = find))
          vertices)
   
 let stupid_monoid () = (* setup *)
