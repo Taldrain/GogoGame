@@ -63,7 +63,7 @@ class board boardsize =
     val mutable plateau = tmp_plateau
     val blacks = BatBitSet.create ss
     val whites = BatBitSet.create ss
-
+    
     method size = size
     method place_stone move =
       let id = Vertex.int_of_vertex size (move.vert) in
@@ -98,3 +98,20 @@ let get_neighbours b s =
   | Corner(_, _, (c1, c2)) -> c1:: c2::[]
   | Border(_, _, (c1, c2, c3)) -> c1:: c2:: c3::[]
   | Middle(_, _, (c1, c2, c3, c4)) -> c1:: c2:: c3:: c4::[]
+
+let id_get_neighbours s =
+  let l = ref [] and m = s mod 13 in
+  if s > 0 && m <> 0 then l := (s-1):: !l;
+  if s < 168 && m <> 12 then l := (s+1):: !l;
+  if s > 12 then l := (s-13):: !l;
+  if s < 156 then l := (s+13):: !l;
+  !l
+
+
+(** renvoie la liste des vertices d'une zone **)
+let get_stones color seen accu s = if BatBitSet.is_set seen then accu
+  else
+    (BatBitSet.set seen s;
+      match get_color s with
+      | c when c = invert_color color -> accu
+      | _ -> List.map (get_stones seen (s:: accu) (Board.get_neighbours s)))
