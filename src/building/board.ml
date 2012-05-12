@@ -107,11 +107,17 @@ let id_get_neighbours s =
   if s < 156 then l := (s+13):: !l;
   !l
 
+let get_color blacks whites s =
+  if BatBitSet.is_set blacks s 
+  then Black
+  else if BatBitSet.is_set whites s then White
+       else Empty
 
 (** renvoie la liste des vertices d'une zone **)
-let get_stones color seen accu s = if BatBitSet.is_set seen then accu
-  else
-    (BatBitSet.set seen s;
-      match get_color s with
-      | c when c = invert_color color -> accu
-      | _ -> List.map (get_stones seen (s:: accu) (Board.get_neighbours s)))
+(* let rec get_stones blacks whites color seen accu s =                                          *)
+(*   if BatBitSet.is_set seen s then accu                                                        *)
+(*   else                                                                                        *)
+(*     (BatBitSet.set seen s;                                                                    *)
+(*       match get_color blacks whites s with                                                    *)
+(*       | c when c = invert_color color -> accu                                                 *)
+(*       | _ -> List.map (get_stones blacks whites color seen (s:: accu)) (id_get_neighbours s)) *)

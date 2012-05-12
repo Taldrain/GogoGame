@@ -56,10 +56,10 @@ let make_group id stones =
     | None -> group_all found liberties
     | Some s -> if (BatISet.mem s seen) then lookup to_look (found, liberties) seen
         else
-          let new_seen = BatISet.add s seen in
+          let seen = BatISet.add s seen in
           match (Board.color_of_node (Globals.board#get#get s)) with
-          | Empty -> lookup to_look (found, liberties +1) new_seen
-          | c when c <> color -> less_liberty s; lookup to_look (found, liberties) new_seen
+          | Empty -> lookup to_look (found, liberties +1) seen
+          | c when c <> color -> less_liberty s; lookup to_look (found, liberties) seen
           | _ ->
               let fnd = ref found in
               (begin

@@ -28,10 +28,8 @@ let rec unset color =
 
 let set_deads stones = List.iter (BatBitSet.set deads) stones
 
-let get_color s =
-  if BatBitSet.is_set blacks s
-  then Black
-  else if BatBitSet.is_set whites s then White else Empty
+let get_color = (Board.get_color !blacks !whites)
+(* let get_stones = (Board.get_stones !blacks !whites) *)
 
 let mem = BatIMap.empty
 
