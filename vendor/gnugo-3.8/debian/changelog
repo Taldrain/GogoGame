@@ -1,0 +1,347 @@
+gnugo (3.8-5) unstable; urgency=low
+
+  * Switched to Debian source format 3.0 (quilt).
+  * Updated dependencies, added quarry to suggestions.
+  * Enabled regression tests.
+  * Updated standards version.
+
+ -- Martin A. Godisch <godisch@debian.org>  Sat, 23 Apr 2011 11:58:53 +0200
+
+gnugo (3.8-4) unstable; urgency=low
+
+  * Fixed /usr/doc/gnugo removal, closes: #580329.
+  * Removed install-info from maintainer scripts.
+  * Updated standards version.
+
+ -- Martin A. Godisch <godisch@debian.org>  Thu, 27 May 2010 03:02:42 +0200
+
+gnugo (3.8-3) unstable; urgency=low
+
+  * Fixed newline handling with libreadline, closes: #557756.
+  * Updated standards version.
+
+ -- Martin A. Godisch <godisch@debian.org>  Tue, 24 Nov 2009 21:18:36 +0100
+
+gnugo (3.8-2) unstable; urgency=low
+
+  * Updated build-dependencies.
+  * Updated standards version.
+
+ -- Martin A. Godisch <godisch@debian.org>  Sun, 13 Sep 2009 19:22:13 +0200
+
+gnugo (3.8-1) unstable; urgency=low
+
+  * New stable upstream release.
+
+ -- Martin A. Godisch <godisch@debian.org>  Thu, 19 Feb 2009 18:34:35 +0100
+
+gnugo (3.8~rc1-3) unstable; urgency=low
+
+  * Enabled libreadline support, closes: #296391.
+
+ -- Martin A. Godisch <godisch@debian.org>  Tue, 17 Feb 2009 19:32:05 +0100
+
+gnugo (3.8~rc1-2) unstable; urgency=low
+
+  * Added texinfo to build-dependencies, closes: #515536.
+
+ -- Martin A. Godisch <godisch@debian.org>  Tue, 17 Feb 2009 18:31:20 +0100
+
+gnugo (3.8~rc1-1) unstable; urgency=low
+
+  * New upstream development release, closes: #509868.
+  * Updated copyright file.
+
+ -- Martin A. Godisch <godisch@debian.org>  Sun, 15 Feb 2009 13:05:15 +0100
+
+gnugo (3.7.13-1) unstable; urgency=low
+
+  * New upstream development release.
+  * Updated clean target.
+  * Added homepage control field, updated package description.
+  * Updated standards version.
+
+ -- Martin A. Godisch <godisch@debian.org>  Sat, 27 Dec 2008 10:58:02 +0100
+
+gnugo (3.7.12-1) unstable; urgency=low
+
+  * New upstream development release.
+  * Updated standards version.
+
+ -- Martin A. Godisch <godisch@debian.org>  Sun, 13 Apr 2008 09:54:58 +0200
+
+gnugo (3.7.11-2) unstable; urgency=low
+
+  * http://trac.gnugo.org/gnugo/attachment/ticket/194/gunnar_7_12.2.diff
+    Closes: #449311.
+  * Mentioned, that commands may be abbreviated, closes: #296394.
+  * Removed broken watch file, closes: #449783.
+
+ -- Martin A. Godisch <godisch@debian.org>  Mon, 10 Dec 2007 19:54:55 +0100
+
+gnugo (3.7.11-1) unstable; urgency=low
+
+  * New upstream development release.
+
+ -- Martin A. Godisch <godisch@debian.org>  Sat, 03 Nov 2007 10:02:05 +0100
+
+gnugo (3.7.10-2) unstable; urgency=low
+
+  * Updated gnugo.el from http://www.gnuvola.org/software/, closes: #435191.
+  * Fixed timestamps.
+  * Fixed distclean target.
+
+ -- Martin A. Godisch <godisch@debian.org>  Sat, 06 Oct 2007 10:54:50 +0200
+
+gnugo (3.7.10-1) unstable; urgency=low
+
+  * New upstream development release.
+  * Updated standards version.
+
+ -- Martin A. Godisch <godisch@debian.org>  Mon, 11 Sep 2006 03:24:15 +0200
+
+gnugo (3.7.9-1) unstable; urgency=low
+
+  * New upstream development release.
+
+ -- Martin A. Godisch <godisch@debian.org>  Sun, 12 Mar 2006 08:25:15 +0100
+
+gnugo (3.7.8-1) unstable; urgency=low
+
+  * New upstream development release,
+    closes: #350990,
+    closes: #341020 (various board size bugs).
+
+ -- Martin A. Godisch <godisch@debian.org>  Sun, 05 Feb 2006 09:24:45 +0100
+
+gnugo (3.7.7-1) unstable; urgency=low
+
+  * New upstream development release,
+    closes: #330935 ("You stepped on a bug" on powerpc).
+
+ -- Martin A. Godisch <godisch@debian.org>  Mon, 10 Oct 2005 19:18:35 +0200
+
+gnugo (3.7.5-1) unstable; urgency=low
+
+  * New upstream development release.
+
+ -- Martin A. Godisch <godisch@debian.org>  Wed, 21 Sep 2005 05:22:20 +0200
+
+gnugo (3.7.4-2) unstable; urgency=low
+
+  * Fixed texi2html call, closes: #326734.
+  * Removed /usr/doc/gnugo symlink, closes: #322785.
+  * Updated menu path.
+  * Updated standards version.
+
+ -- Martin A. Godisch <godisch@debian.org>  Sun, 18 Sep 2005 14:59:10 +0200
+
+gnugo (3.7.4-1) unstable; urgency=low
+
+  * New upstream development release.
+
+ -- Martin A. Godisch <godisch@debian.org>  Thu, 16 Jun 2005 19:18:50 +0200
+
+gnugo (3.6-2) unstable; urgency=low
+
+  * Marked stones on ASCII board, closes: #296398.
+    Thanks to Paul Pogonyshev.
+
+ -- Martin A. Godisch <godisch@debian.org>  Tue, 22 Feb 2005 16:53:00 +0100
+
+gnugo (3.6-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Martin A. Godisch <godisch@debian.org>  Thu, 18 Nov 2004 19:41:25 +0100
+
+gnugo (3.5.10-2) unstable; urgency=low
+
+  * Moving into unstable on upstream request.
+
+ -- Martin A. Godisch <godisch@debian.org>  Sat, 14 Aug 2004 13:55:45 +0200
+
+gnugo (3.5.10-1) experimental; urgency=low
+
+  * New upstream development release.
+  * Added qgo to suggests.
+  * Added watch file.
+
+ -- Martin A. Godisch <godisch@debian.org>  Sat, 07 Aug 2004 19:46:02 +0200
+
+gnugo (3.5.9-1) experimental; urgency=low
+
+  * New upstream development release.
+  * Fixed POSIX compliance of debian/rules.
+
+ -- Martin A. Godisch <godisch@debian.org>  Wed, 21 Jul 2004 17:14:31 +0200
+
+gnugo (3.5.8-1) experimental; urgency=low
+
+  * New upstream development release.
+
+ -- Martin A. Godisch <godisch@debian.org>  Wed, 09 Jun 2004 18:13:03 +0200
+
+gnugo (3.5.7-1) experimental; urgency=low
+
+  * New upstream development release.
+
+ -- Martin A. Godisch <godisch@debian.org>  Sat, 29 May 2004 08:07:01 +0200
+
+gnugo (3.5.6-1) experimental; urgency=low
+
+  * New upstream development release.
+
+ -- Martin A. Godisch <godisch@debian.org>  Fri, 23 Apr 2004 22:33:10 +0200
+
+gnugo (3.5.5-1) experimental; urgency=low
+
+  * New upstream development release.
+
+ -- Martin A. Godisch <godisch@debian.org>  Thu, 15 Apr 2004 18:36:18 +0200
+
+gnugo (3.5.4-2) experimental; urgency=low
+
+  * Replaced gnugo.ps with HTML documentation, adjusted build-dependencies.
+
+ -- Martin A. Godisch <godisch@debian.org>  Tue, 17 Feb 2004 20:15:45 +0100
+
+gnugo (3.4-4) unstable; urgency=low
+
+  * Replaced gnugo.ps with HTML documentation, adjusted build-dependencies.
+
+ -- Martin A. Godisch <godisch@debian.org>  Tue, 17 Feb 2004 20:15:45 +0100
+
+gnugo (3.5.4-1) experimental; urgency=low
+
+  * New upstream development release.
+
+ -- Martin A. Godisch <godisch@debian.org>  Tue, 17 Feb 2004 08:11:21 +0100
+
+gnugo (3.4-3) unstable; urgency=low
+
+  * Added gnugo.ps, adjusted build-dependencies.
+  * Added NEWS file.
+
+ -- Martin A. Godisch <godisch@debian.org>  Tue, 17 Feb 2004 08:11:21 +0100
+
+gnugo (3.4-2) unstable; urgency=low
+
+  * Updated build-dependency.
+  * Added DEBIAN/md5sums.
+  * Fixed dashes in manual page.
+  * Fixed installation of debian/prerm.
+  * Fixed permissions of DEBIAN/control.
+
+ -- Martin A. Godisch <godisch@debian.org>  Sun, 15 Feb 2004 08:49:50 +0100
+
+gnugo (3.4-1) unstable; urgency=low
+
+  * New maintainer.
+  * New upstream release, closes: #204178,
+    closes: #153028 (bad URL in manual page),
+    closes: #180406 (bad title in manual page).
+  * Updated debian/ directory, package description, etc.
+
+ -- Martin A. Godisch <godisch@debian.org>  Sun, 19 Oct 2003 18:26:45 +0200
+
+gnugo (3.2-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Brian Mays <brian@debian.org>  Sun, 28 Apr 2002 13:55:31 -0400
+
+gnugo (3.0.0-4) unstable; urgency=medium
+
+  * Modified postinst to ignore an existing /usr/doc/$package directory.
+
+ -- Brian Mays <brian@debian.org>  Wed, 20 Mar 2002 10:14:02 -0500
+
+gnugo (3.0.0-3) unstable; urgency=low
+
+  * Fixed symlink /usr/doc -> ../share/doc.
+  * Fixed reference to GPL.
+  * Improved stripping of binaries.
+  * Removed icon=none from menu file.
+  * Added a debugboard man page.
+
+ -- Brian Mays <brian@debian.org>  Sat,  2 Feb 2002 17:52:06 -0500
+
+gnugo (3.0.0-2) unstable; urgency=low
+
+  * Added "Go" menu hint.  (Closes: Bug#121014)
+
+ -- Brian Mays <brian@debian.org>  Mon, 26 Nov 2001 11:42:33 -0500
+
+gnugo (3.0.0-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Brian Mays <brian@debian.org>  Fri,  7 Sep 2001 10:40:57 -0400
+
+gnugo (2.6-4) unstable; urgency=low
+
+  * Removed "-g" gcc option as per policy.
+
+ -- Brian Mays <brian@debian.org>  Mon,  9 Jul 2001 10:34:50 -0400
+
+gnugo (2.6-3) unstable; urgency=low
+
+  * Rebuilt to correctly partition the sources.
+
+ -- Brian Mays <brian@debian.org>  Fri,  5 Jan 2001 13:26:40 -0500
+
+gnugo (2.6-2) unstable; urgency=low
+
+  * Added the Emacs mode for GNU Go to the package.
+
+ -- Brian Mays <brian@debian.org>  Tue, 11 Apr 2000 09:33:38 -0400
+
+gnugo (2.6-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Brian Mays <brian@debian.org>  Sat, 19 Feb 2000 12:40:36 -0500
+
+gnugo (2.4-3) unstable; urgency=low
+
+  * Added build-time dependencies.
+
+ -- Brian Mays <brian@debian.org>  Mon, 17 Jan 2000 13:38:55 -0500
+
+gnugo (2.4-2) unstable; urgency=low
+
+  * Fixed FHS /usr/doc -> /usr/share/doc transition scheme.
+
+ -- Brian Mays <brian@debian.org>  Fri,  1 Oct 1999 12:59:46 -0400
+
+gnugo (2.4-1) unstable; urgency=low
+
+  * New upstream version.
+  * Moved the doc directory to under /usr/share as per the FHS.
+
+ -- Brian Mays <brian@debian.org>  Thu, 16 Sep 1999 14:46:08 -0400
+
+gnugo (1.2-5) unstable; urgency=low
+
+  * Libc6 release.
+
+ -- Brian Mays <brian@debian.org>  Tue,  5 Aug 1997 17:02:29 -0400
+
+gnugo (1.2-4) frozen unstable; urgency=low
+
+  * Fixed Debian menu support.
+
+ -- Brian Mays <brian@debian.org>  Wed, 28 May 1997 15:26:56 -0400
+
+gnugo (1.2-3) unstable; urgency=low
+
+  * Added Debian menu support.
+
+ -- Brian Mays <brian@debian.org>  Sat, 19 Apr 1997 19:07:05 -0400
+
+gnugo (1.2-2) unstable; urgency=low
+
+  * First release with the new source format.
+
+ -- Brian Mays <brian@debian.org>  Fri, 23 Aug 1996 23:28:03 -0400
