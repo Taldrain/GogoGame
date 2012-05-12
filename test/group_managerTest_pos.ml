@@ -30,7 +30,7 @@ let test_monoids ~vertices =
   let vertices = List.map (int_of_vertex 13) vertices
   in
     assert_bool "groupes mal detecte (pierres non trouvable dans la liste)"
-      (List.for_all (fun m -> (Group_again.group_of_stone m) <> Group_again.group_zero ()) vertices)
+      (List.for_all (fun m ->  (Group_again.group_of_stone m) <> (Group_again.group_zero () )  ) vertices)
   
 let are_in_same_group ~color ~vertices =
   let vertices = List.map (int_of_vertex 13) vertices in
@@ -90,11 +90,11 @@ let large_multiple_monoids () =
   let count = ref 0 in
   let rec generate_vertices { pass = _; nb = n; letter = l } =
     match l with
-    | 'N' ->
+    | 'M' ->
         if n <> 1
-        then { pass = false; nb = n - 1; letter = 'B'; }
+        then { pass = false; nb = n +1 ; letter = 'B'; }
         else { pass = true; nb = 1; letter = 'A'; }
-    | 'M' -> { pass = false; nb = n - 1; letter = 'A'; }
+    | 'N' -> { pass = false; nb =  n +1; letter = 'A'; }
     | c -> { pass = false; nb = n; letter = Char.chr (2 + (Char.code c)); } in
   let fill_board () =
     let v = ref { pass = false; nb = 1; letter = 'A'; }
@@ -114,7 +114,6 @@ let large_multiple_monoids () =
 let simple_allongement () = (* setup *)
   (Board_init.self_init ();
    let v1 = { pass = false; nb = 7; letter = 'F'; }
-
    and v2 = { pass = false; nb = 7; letter = 'G'; }
    in
      (* tests *)
