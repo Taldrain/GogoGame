@@ -5,13 +5,11 @@ On verra bien ce que ca va donner...
 **)
 
 open BatRandom
+open Entities
+open Entities.Color
 
 let seed = BatRandom.self_init ()
 let uctk = 0.44 (* sqrt (1/5) *)
-
-type gameState = | Win | Lose
-let invert_gameStatus = function | Win -> Lose | Lose -> Win
-let invert_color = function | White -> Black | _ -> White
 
 class node color id blk wht =
 object
@@ -25,6 +23,9 @@ object
   method color = color
   method visits = visits
   method wins = wins
+  method blacks = blk
+  method whites = wht
+
   method sibling = match child with
     | None -> None
     | Some child ->
@@ -80,10 +81,15 @@ let uctSelect node =
   select node#child 0 0
 
 let playRandomGame node =
-  let rec play node =
-    if not (gameOver node) then play (random_node ()) else node
+  let game_over n =
+    (BatBitSet.count n#blacks) + (BatBitSet.count n#whites) >= 167
   in
-  
+  let rec play node =
+    if not (game_over node) then play (random_node ()) else node
+  in
+  let (blk,wht) = Scoring.score node#blacks node#whites in
+  let comp = if node#color = White then (<) else (>) in
+  if comp blk wht then Win else Lose
 
 let playSimulation (n: node) =
   let randomResult =
