@@ -8,7 +8,7 @@ ifdef NEED_FOR_SPEED
 	OPTFLAGS := -cflags -nodynlink,-ffast-math
 endif
 
-INC := -I src -I src/building -I src/talking -I src/thinking
+INC := -I src -I src/building -I src/talking -I src/thinking -I thinking/algos
 PKG := -pkg batteries
 
 CC := ocamlbuild
