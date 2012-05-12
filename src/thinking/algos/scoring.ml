@@ -11,11 +11,11 @@ open Entities.Move
 
 open Board
 
-let blacks = ref BatBitSet.empty ()
+open BatPervasives
 
-and whites = ref BatBitSet.empty ()
-and score_black = ref 0
-and score_white = ref 0
+let blacks = ref (BatBitSet.empty ())
+
+and whites = ref (BatBitSet.empty ())
 
 and deads = BatBitSet.create 168
 
@@ -31,31 +31,46 @@ let set_deads stones = List.iter (BatBitSet.set deads) stones
 let get_color = (Board.get_color !blacks !whites)
 (* let get_stones = (Board.get_stones !blacks !whites) *)
 
-let mem = BatIMap.empty
+let mem = ref BatIMap.empty
 
 let get_color_terr s =
-  let rec search_color s =
-    let l = List.map get_color (id_get_neighbours s)
-    in
-    try BatList.find_exn (( <> ) Empty) Not_found l
-    with
-    | Not_found ->
-        List.map search_color (List.concat (List.map id_get_neighbours l))
+  let rec search_color open_list closed_list =
+    match BatEnum.get open_list with
+  	| None -> failwith "couleur de territoire non trouvée"
+    | Some s -> if BatBitSet.is_set closed_list s
+      then search_color open_list closed_list
+      else
+        (BatBitSet.set closed_list s;
+        let c = get_color s in
+        if c <> Empty then c
+        else
+          (List.iter (BatEnum.push open_list) (id_get_neighbours s);
+          search_color open_list closed_list))
   in
-  if BatIMap.mem s mem
-  then BatIMap.find s mem
+  if BatIMap.mem s !mem
+  then BatIMap.find s !mem
   else
     (let c = get_color s
       in
       if c <> Empty
-      then (BatIMap.add s c mem; c)
-      else (let c = search_color s in (BatIMap.add s c mem; c)))
+      then (mem := BatIMap.add s c !mem; c)
+      else (
+        let c = search_color (BatList.enum [s]) (BatBitSet.create 168) in
+        (mem := BatIMap.add s c !mem; c)))
 
 (* let set_dead s = BatBitSet.set deads s *)
-let is_dead s = BatBitSet.is_set s
+let is_dead s = BatBitSet.is_set deads s
 
 (** @return [(bool,stones)] avec bool si la region vit, et stones les pierres de cette region **)
-let rec find color seen stones s =
+let rec find : (Color.t -> BatBitSet.t -> int list -> int -> (bool*(int list))) =
+  fun color seen stones s ->
+  let merge ll =
+    let rec merge_all (life,stones) = function
+    | [] -> (life,stones)
+    | (b,s)::l -> merge_all (b && life,s::stones) l
+    in
+    merge_all (true,[]) ll
+  in
   if BatBitSet.is_set seen s
   then (true, stones)
   else
@@ -63,8 +78,8 @@ let rec find color seen stones s =
       (match get_color s with
         | c when c = (invert_color color) -> ((is_dead s), stones)
         | c when c = color ->
-            List.map (find seen (s :: stones)) (Board.id_get_neighbours s)
-        | _ -> List.map (find seen stones) (Board.id_get_neighbours s)))
+            merge (List.map (find color seen (s :: stones)) (Board.id_get_neighbours s))
+        | _ -> merge (List.map (find color seen stones) (Board.id_get_neighbours s))))
 
 (** @return [(bool,stones)] avec bool si la region vit, et stones les pierres de cette region **)
 let find_region color s = find color (BatBitSet.create 168) [] s
@@ -174,9 +189,9 @@ let score blk wht =
     whites := wht;
     mark_deads ();
     let (score, scored) = mark_score ()
-    
+
     and b = ref 0
-    
+
     and w = ref 0
     in
     (for i = 0 to 168 do

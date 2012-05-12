@@ -105,7 +105,7 @@ let playSimulation (n: node) =
   in
   n#update randomResult
 
-let uctSearch numSim blacks whites =
+let uctSearch numSim color blacks whites =
   let root = new node blacks whites in
   for i = 0 to numSim do
     playSimulation root

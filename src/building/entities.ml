@@ -85,7 +85,9 @@ struct
     with
     | Invalid_alphabet_of_int ->
         raise (Vertex_letter_error (string_of_int q))
-  
+
+  let vertex_of_id = (vertex_of_int 13)
+
   let vertex_is_a_pass { nb = _; letter = _; pass = p } = p
   
 end

@@ -23,21 +23,23 @@ let int_of_char c =
 @return la place dans l'alphabet latin de cette lettre
 **)
 let int_of_letter c =
+  let skip_i c = if c < 8 then c else c - 1 in
   let code = (Char.code c) - 65 in
   (assert (code >= 0);
-  if code < 27 then code
+  if code < 27 then skip_i code
   else
     let code = code - 32 in
     (assert (code >= 0);
      assert (code < 17);
-     code))
+     skip_i code))
 
 exception Invalid_alphabet_of_int
 
 let letter_of_int i =
   let c = Char.chr (i +65) in
   match c with
-  | 'A'..'Z' | 'a'..'z' -> c
+  | 'A'..'H' | 'a'..'h' -> c
+  | 'I'..'Z' | 'i'..'z' -> Char.chr (1 + (Char.code c))
   | _ -> raise Invalid_alphabet_of_int
 
 let enum_push e elt = BatEnum.push e elt; e
