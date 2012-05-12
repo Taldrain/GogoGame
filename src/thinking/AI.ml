@@ -24,7 +24,7 @@ let genmove c =
     | Corner (_, Empty, _) | Border (_, Empty, _) | Middle (_, Empty, _) -> i
     | _ -> try_id (i +1)
   in
-  { color = c; vert = (vertex_of_int b#size (try_id 0)) }
+   { color = c; vert = (vertex_of_int b#size (try_id 0)) }
 
 let _ =
   let event_clear = Globals.event_clear#get in
