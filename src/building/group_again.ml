@@ -12,15 +12,14 @@ type group = {
   stones: BatISet.t
   }
 
-let b = Globals.board#get
 
 let is_in stone group = BatISet.mem stone group.stones
 
-let groups = BatDynArray.make 100      (* les groupes *)
+let groups = BatDynArray.make 100     (* les groupes *)
 let ref_groups = BatDynArray.make 100  (* talbeau d'id, comme des pointeurs *)
 let idx_ref_groups = ref 0
-let group_of_stone s = BatDynArray.get groups (BatDynArray.get (ref_groups) s)
-let group_zero = BatDynArray.get groups 0
+let group_of_stone s = BatDynArray.get groups (BatDynArray.get (ref_groups) s)  
+let group_zero () = BatDynArray.get groups 0 
 
 let up i = i + 1
 let down i = i - 1
@@ -39,9 +38,10 @@ let slookUp i stones = (i mod 13) <> 12 && BatBitSet.is_set stones (up i)
 let slookDw i stones = (i mod 13) <> 0 && BatBitSet.is_set stones (down i)
 
 let less_liberty s =
-  (group_of_stone s).lib <- (group_of_stone s).lib -1;
+  let unstone x = (Globals.board#get#unset_stone {color = Black; vert = (vertex_of_int 13 x) }) in
+  (group_of_stone s).lib <- (group_of_stone s).lib-1;
   if (group_of_stone s).lib < 0 then
-  BatISet.iter (fun x -> (Globals.board#get#unset_stone {color = Black; vert = (vertex_of_int 13 x) })) (group_of_stone s).stones
+  BatISet.iter unstone (group_of_stone s).stones
   else
   ()
 
@@ -59,7 +59,7 @@ let make_group id stones =
       | Some s -> if (BatISet.mem s seen) then lookup to_look (found,liberties) seen
 	else
 	  let new_seen = BatISet.add s seen in
-	  match (Board.color_of_node (b#get s)) with
+	  match (Board.color_of_node (Globals.board#get#get s)) with
 	    |Empty -> lookup to_look (found, liberties+1) new_seen
 	    |c when c <> color -> less_liberty s; lookup to_look (found, liberties) new_seen
 	    |_ -> 
@@ -79,15 +79,12 @@ let make_group id stones =
 	       end;
 	     lookup to_look (!fnd, liberties) seen) 
   in
-  let rec add_grp grp = 
-    BatDynArray.add groups grp; 
-    idx_ref_groups := !idx_ref_groups + 1;
-  in
   let enm = BatEnum.empty () in
   let seen = BatISet.empty in
 	let found = BatISet.empty in
   BatEnum.push enm id;
-  add_grp (lookup enm (found, 0) seen)
-    
+  BatDynArray.add groups (lookup enm (found, 0) seen);
+  idx_ref_groups := !idx_ref_groups + 1
 
-let _ = BatDynArray.set groups 0 {lib = max_int; stones = BatISet.empty}
+let _ = 
+  BatDynArray.add groups ({lib = max_int; stones = BatISet.empty}) 
