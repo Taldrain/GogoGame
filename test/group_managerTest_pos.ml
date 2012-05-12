@@ -16,7 +16,7 @@ open Entities.Color
 open Group
   
 let test_count ~expected =
-  let count = !Group_manager.count
+  let count = !Group_again.idx_ref_groups
   in
     assert_bool
       (sprintf "nombre de groupes detectes incorrect (count a %d, attendu %d)" count expected)
@@ -26,7 +26,7 @@ let test_monoids ~vertices =
   let vertices = List.map (int_of_vertex 13) vertices
   in
     assert_bool "groupes mal detecte (pierres non trouvable dans la liste)"
-      (List.for_all (fun m -> (Group_manager.find m) <> None) vertices)
+      (List.for_all (fun m -> (Group_again.group_of_stone m) <> Group_again.group_zero) vertices)
   
 let are_in_same_group ~color ~vertices =
   let vertices = List.map (int_of_vertex 13) vertices in
@@ -38,9 +38,9 @@ let are_in_same_group ~color ~vertices =
       "groupes mal fusionnes (pierres ne sont pas dans le meme groupe)"
       (List.for_all
          (fun m ->
-            let find = Group_manager.find m
+            let find = Group_again.group_of_stone m
             in
-              (find <> None) &&
+              (find <> Group_again.group_zero) &&
                 (let (Some find) = find
                  in if !set then (g := find; true) else !g = find))
          vertices)
@@ -146,7 +146,7 @@ let reverse_allongement () = (* setup *)
      (* tests *)
      (Playing.play_v ~vertices: [ v1; v2; v3 ];
       test_count ~expected: 1;
-      are_in_same_group ~color: Black ~vertices: [ v1; v2; v3 ]))
+      are_in_same_group ~color: Black ~vertices: [ v1; v2; v3 ])) 
 
 let test_fusion () = todo "not yet"
 

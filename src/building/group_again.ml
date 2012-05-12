@@ -20,6 +20,7 @@ let groups = BatDynArray.make 100      (* les groupes *)
 let ref_groups = BatDynArray.make 100  (* talbeau d'id, comme des pointeurs *)
 let idx_ref_groups = ref 0
 let group_of_stone s = BatDynArray.get groups (BatDynArray.get (ref_groups) s)
+let group_zero = BatDynArray.get groups 0
 
 let up i = i + 1
 let down i = i - 1
@@ -38,7 +39,7 @@ let slookUp i stones = (i mod 13) <> 12 && BatBitSet.is_set stones (up i)
 let slookDw i stones = (i mod 13) <> 0 && BatBitSet.is_set stones (down i)
 
 let less_liberty s =
-  (group_of_stone s).lib = (group_of_stone s).lib -1;
+  (group_of_stone s).lib <- (group_of_stone s).lib -1;
   if (group_of_stone s).lib < 0 then
   BatISet.iter (fun x -> (Globals.board#get#unset_stone {color = Black; vert = (vertex_of_int 13 x) })) (group_of_stone s).stones
   else
@@ -89,4 +90,4 @@ let make_group id stones =
   add_grp (lookup enm (found, 0) seen)
     
 
- 
+let _ = BatDynArray.set groups 0 {lib = max_int; stones = BatISet.empty}
