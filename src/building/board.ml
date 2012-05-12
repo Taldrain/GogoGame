@@ -66,7 +66,7 @@ class board boardsize =
     
     method size = size
     method place_stone move =
-      let id = Vertex.int_of_vertex size (move.vert) in
+      let id = (Vertex.int_of_vertex size (move.vert)) in
       try
         is_clear <- false;
         ((plateau.(id) <- match plateau.(id) with

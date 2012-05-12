@@ -74,7 +74,7 @@ struct
       ((n < boardSize) && ((Common.int_of_letter l) < boardSize)))
   
   let int_of_vertex bsize v =
-    if v.pass then (-1) else (bsize * (int_of_letter v.letter)) + v.nb
+    if v.pass then (-1) else (bsize * (int_of_letter v.letter)) + (v.nb -1)
   
   let int_of_v = (int_of_vertex 13)
   
