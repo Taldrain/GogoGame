@@ -74,7 +74,7 @@ struct
       ((n < boardSize) && ((Common.int_of_letter l) < boardSize)))
   
   let int_of_vertex bsize v =
-    if v.pass then (-1) else (bsize * (int_of_letter v.letter)) + v.nb
+    if v.pass then (-1) else (bsize * (int_of_letter v.letter)) + (v.nb -1)
   
   let int_of_v = (int_of_vertex 13)
   
@@ -85,7 +85,9 @@ struct
     with
     | Invalid_alphabet_of_int ->
         raise (Vertex_letter_error (string_of_int q))
-  
+
+  let vertex_of_id = (vertex_of_int 13)
+
   let vertex_is_a_pass { nb = _; letter = _; pass = p } = p
   
 end
@@ -131,3 +133,6 @@ type entity =
   | Vertex of Vertex.t
   | Color of Color.t
   | Move of Move.t
+
+type gameState = | Win | Lose
+let invert_gameStatus = function | Win -> Lose | Lose -> Win
