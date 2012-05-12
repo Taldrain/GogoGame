@@ -24,15 +24,16 @@ let int_of_char c =
 @return la place dans l'alphabet latin de cette lettre
 **)
 let int_of_letter c =
+  let skip_i c = if c < 8 then c else c - 1 in
   let code = (Char.code c) - 65 in
   let skip_i c = if code < 8 then code else code - 1 in
   (assert (code >= 0);
-  if code < 27 then skip_i c
+  if code < 27 then skip_i code
   else
     let code = code - 32 in
     (assert (code >= 0);
      assert (code < 17);
-     skip_i c))
+     skip_i code))
 
 
 exception Invalid_alphabet_of_int
@@ -48,7 +49,7 @@ let enum_push e elt = BatEnum.push e elt; e
 
 let drop_one e = BatEnum.drop 1 e; e
 
-(* fonction de switch sans test (dans predicate), et success non-parametré *)
+(* fonction de switch sans test (dans predicate), et success non-parametrï¿½ *)
 let rec switchF (default:'a) (predicates: ((('b -> bool) * 'a) list)) (param:'b) =
   match predicates with
   | [] -> default param
@@ -57,7 +58,7 @@ let rec switchF (default:'a) (predicates: ((('b -> bool) * 'a) list)) (param:'b)
   | (test, success):: l -> if test param then success param
       else switchF default l param
 
-(* fonction de switch avec comparer parametré, et success parametré *)
+(* fonction de switch avec comparer parametrï¿½, et success parametrï¿½ *)
 let rec switchC (comparer: ('a -> 'b -> bool)) (default:'b) predicates (param:'b) =
   match predicates with
   | [] -> default
@@ -66,7 +67,7 @@ let rec switchC (comparer: ('a -> 'b -> bool)) (default:'b) predicates (param:'b
   | (test, success):: l -> if comparer test param then success param
       else switchC comparer default l param
 
-(* fonction de switch avec comparer prédéterminé (=), et success paramétré *)
+(* fonction de switch avec comparer prï¿½dï¿½terminï¿½ (=), et success paramï¿½trï¿½ *)
 let rec switch = (switchC (=))
 let a = switch 0 [(1, ((+) 2))] 2
 

@@ -15,16 +15,28 @@ let refresh_groups move =
   if p then ()
   else
     (Group_again.make_group (int_of_vertex 13 ({pass=p;nb=n;letter=l})) (BatBitSet.union board#get#blacks board#get#whites))
-		
+
 
 let genmove c =
   let b = board#get in
-  let rec try_id i =
-    match b#get i with
-    | Corner (_, Empty, _) | Border (_, Empty, _) | Middle (_, Empty, _) -> i
-    | _ -> try_id (i +1)
+  let best = UCT.uctSearch 50 c b#blacks b#whites in
+  let bitset = (
+    if c = Black then BatBitSet.differentiate_sym b#blacks best#blacks
+    else BatBitSet.differentiate_sym b#whites best#whites
+    )
   in
-   { color = c; vert = (vertex_of_int b#size (try_id 0)) }
+  match BatEnum.get (BatBitSet.enum bitset) with
+    | None -> failwith "Pas de coup trouv�, WTF ?!"
+    | Some id -> { color = c; vert = (vertex_of_int id) }
+
+(* let genmove c =                                                               *)
+(*   let b = board#get in                                                        *)
+(*   let rec try_id i =                                                          *)
+(*     match b#get i with                                                        *)
+(*     | Corner (_, Empty, _) | Border (_, Empty, _) | Middle (_, Empty, _) -> i *)
+(*     | _ -> try_id (i +1)                                                      *)
+(*   in                                                                          *)
+(*   { color = c; vert = (vertex_of_int b#size (try_id 0)) }                     *)
 
 let _ =
   let event_clear = Globals.event_clear#get in

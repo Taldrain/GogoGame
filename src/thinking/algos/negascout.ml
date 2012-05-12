@@ -8,16 +8,11 @@ open Entities.Move
 
 open AlgoUtils
 
-(* TODO *)
-let groups_refresh g = g
-let shapes_refresh s = s
-
 (* setup *)
 let depth = 3
 
 let size = 13
-
-let ss = size * size
+let ss = 169
 
 (* fin setup *)
 let i_want_to_pass = false
