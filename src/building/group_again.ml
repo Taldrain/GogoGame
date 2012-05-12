@@ -14,11 +14,13 @@ type group = {
 
 let is_in stone group = BatISet.mem stone group.stones
 
-let groups = Array.make 100 { lib = max_int; stones = BatISet.empty }    (* les groupes *)
+let groups = ref (Array.make 100 { lib = max_int; stones = BatISet.empty })    (* les groupes *)
 let ref_groups = Array.make 169 0  (* talbeau d'id, comme des pointeurs *)
 let idx_ref_groups = ref 0
-let group_of_stone s = Array.get groups (Array.get (ref_groups) (s))
+let group_of_stone s = Array.get !groups (Array.get (ref_groups) (s))
 let group_zero () = group_of_stone (0)
+
+let clean_groups () = groups := Array.make 100 { lib = max_int; stones = BatISet.empty }; idx_ref_groups := 0 
 
 let up i = i + 1
 let down i = i - 1
@@ -84,7 +86,7 @@ let make_group id stones =
   let refresh_groups grp =
   idx_ref_groups := !idx_ref_groups + 1;
   Array.set ref_groups id !idx_ref_groups;
-  Array.set groups !idx_ref_groups grp;
+  Array.set !groups !idx_ref_groups grp;
   in
   refresh_groups (lookup enm (found, 0) seen)
   

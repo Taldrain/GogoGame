@@ -26,7 +26,7 @@ let genmove c =
     )
   in
   match BatEnum.get (BatBitSet.enum bitset) with
-    | None -> failwith "Pas de coup trouvé, WTF ?!"
+    | None -> failwith "Pas de coup trouvï¿½, WTF ?!"
     | Some id -> { color = c; vert = (vertex_of_int id) }
 
 (* let genmove c =                                                               *)

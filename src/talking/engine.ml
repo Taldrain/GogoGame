@@ -15,10 +15,11 @@ list_commands\nboardsize\nclear_board\nkomi\nfixed_handicap\nplace_free_handicap
 set_free_handicap\nplay\ngenmove\nundo"
 
 let set_boardsize i =
+  Group_again.clean_groups ();
   if i < 7 || i > 25 then Failure "unacceptable size"
   else (Globals.board#set (new Board.board i); Success)
 
-let clean_board () = Globals.event_clear#get#raise
+let clean_board () = Group_again.clean_groups (); Globals.event_clear#get#raise
 
 let set_komi f =
   try Globals.komi := f; Success
