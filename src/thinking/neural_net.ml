@@ -1,5 +1,3 @@
-let dBias = 0 (*TODO*)
-
 (* Constructor for the class Neuron
  * -> add a random nbr instead of the current match
  *)
@@ -9,7 +7,7 @@ let constructorN n =
     if i = s then
       yar
     else
-      (BatDynArray.add yar i;
+      (BatDynArray.add yar (Common.randC()) ;
       cstor_rec yar s (i+1))
   in cstor_rec ar (n+1) 0
 
@@ -40,7 +38,7 @@ let constructorL nbrN nbrIN =
 (* Class for one layout of neuron
  *)
 class layoutNeuron nbr_neuron nbr_input_neuron =
-    let arrayL = constructorL nbr_neuron nbr_input_neuron in
+  let arrayL = constructorL nbr_neuron nbr_input_neuron in
 object
   val mutable nbrNeuron = BatDynArray.length arrayL
   val mutable neuronArr = arrayL
@@ -51,7 +49,7 @@ end
 
 (* class of the neural network
  *)
-class neuralNet nbri nbro nbrh nbrn =
+class neuralNet nbri nbro nbrh nbrn db =
   let foo = BatDynArray.create () in
 object(self)
   val mutable nbrInput = nbri
@@ -62,10 +60,11 @@ object(self)
   val mutable nbrNLayout = nbrn
   (* array for all intern layout with also the output layout *)
   val mutable layoutArr = foo
+  val mutable bias = db
 
 
-  method evalFunction input res = 0
-    (*(1. /.(1. +. (exp (-.input /. res))))*)
+  method evalFunction input res =
+    (1. /.(1. +. (exp (-.input /. res))))
 
   (* ! to invoque when a new obj is created ! *)
   method newNeuralNet =
@@ -167,7 +166,7 @@ object(self)
         if k = s then
           netI
         else
-          (let foo = netI + (BatDynArray.get f#gInputArr k) *
+          (let foo = netI +. (BatDynArray.get f#gInputArr k) *.
                     (BatDynArray.get inputs cW) in
           pWeightU foo inputs (cW+1) f (k+1) s)
       in
@@ -177,12 +176,12 @@ object(self)
           outputs
         else
           (let foo = (BatDynArray.get p#gNeuronArr j)#gNbrInput in
-          let bar = pWeightU 0 inputs 0 (BatDynArray.get p#gNeuronArr j) 0 foo
+          let bar = pWeightU 0. inputs 0 (BatDynArray.get p#gNeuronArr j) 0 foo
           in
-          let tmp = bar + 
+          let tmp = bar +. 
                    (BatDynArray.get
-                      (BatDynArray.get p#gNeuronArr j)#gInputArr (foo-1)) *
-                    dBias
+                      (BatDynArray.get p#gNeuronArr j)#gInputArr
+                      (truncate((float foo) -. 1.)) *. (float bias))
           in
           BatDynArray.add outputs (self#evalFunction tmp 1.);
           pNeuronU inputs outputs p (j+1) s)
@@ -202,6 +201,4 @@ object(self)
       in
         pLayoutU input output 0 (nbrILayout+1)
 end
-
-
 
