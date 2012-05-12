@@ -131,3 +131,6 @@ type entity =
   | Vertex of Vertex.t
   | Color of Color.t
   | Move of Move.t
+
+type gameState = | Win | Lose
+let invert_gameStatus = function | Win -> Lose | Lose -> Win
