@@ -89,13 +89,13 @@ let multiples_monoids () = (* setup *)
 let large_multiple_monoids () =
   let count = ref 0 in
   let rec generate_vertices { pass = _; nb = n; letter = l } =
-    match l with
-    | 'M' ->
-        if n <> 1
-        then { pass = false; nb = n +1 ; letter = 'B'; }
-        else { pass = true; nb = 1; letter = 'A'; }
-    | 'N' -> { pass = false; nb =  n +1; letter = 'A'; }
-    | c -> { pass = false; nb = n; letter = Char.chr (2 + (Char.code c)); } in
+    if n >= 14 then { pass = true; nb = 1; letter = 'A' }
+    else
+    (match l with
+    | 'M' -> { pass = false; nb = n + 1; letter = 'A' }
+    | 'N' -> { pass = false; nb = n + 1; letter = 'B'; }
+    | c -> { pass = false; nb = n; letter = Char.chr (2 + (Char.code c)); })
+    in
   let fill_board () =
     let v = ref { pass = false; nb = 1; letter = 'A'; }
 
