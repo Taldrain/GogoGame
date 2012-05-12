@@ -1,14 +1,16 @@
-let dBias = (*TODO*)
+let dBias = 0 (*TODO*)
 
 (* Constructor for the class Neuron
  * -> add a random nbr instead of the current match
  *)
 let constructorN n =
-  let ar = BatDynArray.create in
-  let rec cstor_rec yar s i = match i with
-      s -> yar
-    | _ -> BatDynArray.add yar i;
-           cstor_rec yar s (i+1)
+  let ar = BatDynArray.create () in
+  let rec cstor_rec yar s i =
+    if i = s then
+      yar
+    else
+      (BatDynArray.add yar i;
+      cstor_rec yar s (i+1))
   in cstor_rec ar (n+1) 0
 
 
@@ -18,17 +20,21 @@ class neuron nbr_input =
 object
   val mutable nbrInput = BatDynArray.length arrayN
   val mutable inputArr = arrayN
+  method gInputArr = inputArr
+  method gNbrInput = nbrInput
 end
 
 
 (* Constructor for the class LayoutNeuron
  *)
 let constructorL nbrN nbrIN =
-  let ar = BatDynArray.create in
-  let rec cstor_rec yar e s i = match i with
-      s -> yar
-    | _ -> BatDynArray.add yar (new neuron e);
-           cstor_rec yar e s (i+1)
+  let ar = BatDynArray.create () in
+  let rec cstor_rec yar e s i =
+    if i = s then
+      yar
+    else
+     (BatDynArray.add yar (new neuron e);
+     cstor_rec yar e s (i+1))
   in cstor_rec ar nbrIN nbrN 0
 
 (* Class for one layout of neuron
@@ -38,14 +44,16 @@ class layoutNeuron nbr_neuron nbr_input_neuron =
 object
   val mutable nbrNeuron = BatDynArray.length arrayL
   val mutable neuronArr = arrayL
+  method gNeuronArr = neuronArr
+  method gNbrNeuron = nbrNeuron
 end
 
 
 (* class of the neural network
  *)
 class neuralNet nbri nbro nbrh nbrn =
-  let foo = BarDynArr.create in
-object
+  let foo = BatDynArray.create () in
+object(self)
   val mutable nbrInput = nbri
   val mutable nbrOutput = nbro
   (* nbr intern layout *)
@@ -55,108 +63,144 @@ object
   (* array for all intern layout with also the output layout *)
   val mutable layoutArr = foo
 
+
+  method evalFunction input res = 0
+    (*(1. /.(1. +. (exp (-.input /. res))))*)
+
   (* ! to invoque when a new obj is created ! *)
-  val method newNeuralNet =
+  method newNeuralNet =
     if (nbrILayout > 0) then
-      BatDynArr.add layoutArr (new layoutNeuron nbrNLayout nbrInput);
-      let rec mLayout yar = function
-          0 -> yar
-        | i -> BatDynArr.add layoutArr (new layoutNeuron nbrNLayout nbrNLayout);
-               mLayout yar (i-1)
-      in mLayout layoutAr (nbrILayout - 1);
-      BatDynArr.add layoutArr (new layoutNeuron nbrOutput nbrNLayout)
+      (BatDynArray.add layoutArr (new layoutNeuron nbrNLayout nbrInput);
+      let rec mLayout yar s i =
+        if i = s then
+          yar
+        else
+          (BatDynArray.add yar (new layoutNeuron nbrNLayout nbrNLayout);
+          mLayout yar s (i+1))
+      in mLayout layoutArr (nbrILayout - 1) 0;
+      BatDynArray.add layoutArr (new layoutNeuron nbrOutput nbrNLayout))
     else
-      BatDynArr.add layoutArr (new layoutNeuron nbrOutput nbrInput)
+      BatDynArray.add layoutArr (new layoutNeuron nbrOutput nbrInput)
 
   (* get the weight of all node, in a DynArr *)
-  val method getWeight =
-    let ar = BatDynArr.create in
-    let rec pWeight yar p k s = match k with
-        s -> yar
-      | _ -> BatDynArr.add yar p.inputArr.(k);
-             pWeight yar p (k+1) s
+  method getWeight =
+    let ar = BatDynArray.create () in
+    let rec pWeight yar p k s =
+      if k = s then
+        yar
+      else
+        (BatDynArray.add yar (BatDynArray.get p#gInputArr k);
+        pWeight yar p (k+1) s)
     in
-    let rec pNeuron yar f j s = match j with
-        s -> yar
-      | _ -> pWeight yar k.neuronArr.(j) 0 k.neuronArr.(j).nbrInput;
-             pNeuron yar f (j+1) s
+    let rec pNeuron yar f j s =
+      if j = s then
+        yar
+      else
+        (let foo = BatDynArray.get f#gNeuronArr j in
+        pWeight yar foo 0 foo#gNbrInput;
+        pNeuron yar f (j+1) s)
     in
-    let rec pLayout yar i s = match i with
-        s -> yar
-      | _ -> pNeuron yar layoutArr.(i) 0 layoutArr.(i).nbrNeuron;
-             pLayout yar (i+1) s
+    let rec pLayout yar i s =
+      if i = s then
+        yar
+      else
+        (let foo = BatDynArray.get layoutArr i in
+        pNeuron yar foo 0 foo#gNbrNeuron;
+        pLayout yar (i+1) s)
     in pLayout ar 0 (nbrILayout + 1)
 
   (* get the nbr total of weight *)
-  val method getNbrWeight =
-    let rec pWeight yar k s = match k with
-        s -> yar
-      | _ -> pWeight (yar+1) (k+1) s
+  method getNbrWeight =
+    let rec pWeight yar k s =
+      if k = s then
+        yar
+      else
+        pWeight (yar+1) (k+1) s
     in
-    let rec pNeuron yar f j s = match j with
-        s -> yar
-      | _ -> pWeight yar 0 k.neuronArr.(j).nbrInput;
-             pNeuron yar f (j+1) s
+    let rec pNeuron yar f j s =
+      if j = s then
+        yar
+      else
+        (let foo = BatDynArray.get f#gNeuronArr j in
+        pWeight yar 0 foo#gNbrInput;
+        pNeuron yar f (j+1) s)
     in
-    let rec pLayout yar i s = match i with
-        s -> yar
-      | _ -> pNeuron yar layoutArr.(i) 0 layoutArr.(i).nbrNeuron;
-             pLayout yar (i+1) s
+    let rec pLayout yar i s =
+      if i = s then
+        yar
+      else
+        (let foo = BatDynArray.get layoutArr i in
+        pNeuron yar foo 0 foo#gNbrNeuron;
+        pLayout yar (i+1) s)
     in pLayout 0 0 (nbrILayout + 1)
 
   (* replace the weight with the one in the dynarr t *)
-  val method putWeight t =
-    let rec pWeight p n k s = match k with
-        s -> ()
-      | _ -> p.inputArr.(k) = t.(n)
-             pWeight p (n+1) (k+1) s
+  method putWeight t =
+    let rec pWeight p n k s =
+      if k != s then
+        (BatDynArray.set p#gInputArr k (BatDynArray.get t n);
+        pWeight p (n+1) (k+1) s)
     in
-    let rec pNeuron f n j s = match j with
-        s -> ()
-      | _ -> pWeight k.neuronArr.(j) n 0 k.neuronArr.(j).nbrInput;
-             pNeuron f n (j+1) s
+    let rec pNeuron f n j s =
+      if j != s then
+        (let foo = BatDynArray.get f#gNeuronArr j in
+        pWeight foo n 0 foo#gNbrInput;
+        pNeuron f n (j+1) s)
     in
-    let rec pLayout n i s = match i with
-        s -> ()
-      | _ -> pNeuron layoutArr.(i) n 0 layoutArr.(i).nbrNeuron;
-             pLayout n (i+1) s
+    let rec pLayout n i s =
+      if i != s then
+        (let foo = BatDynArray.get layoutArr i in
+        pNeuron foo n 0 foo#gNbrNeuron;
+        pLayout n (i+1) s)
     in pLayout 0 0 (nbrILayout + 1)
 
 
-  (* find the output from an input *)
-  val method update input =
-    let output = BatDynArr.create in
+  (* find the output from an input
+   * -> Use the correct amount of input !
+   *)
+  method update input =
+    let output = BatDynArray.create () in
       if (BatDynArray.length input != nbrInput) then
         output
       else
-      let rec pWeightU netI inputs cW f k s = match k with
-          s -> netI
-        | _ -> let foo = netI + f.inputArr.(k) * inputs.(cW) in
-             pWeightU foo inputs (cW+1) f (k+1) s
+      let rec pWeightU netI inputs cW f k s =
+        if k = s then
+          netI
+        else
+          (let foo = netI + (BatDynArray.get f#gInputArr k) *
+                    (BatDynArray.get inputs cW) in
+          pWeightU foo inputs (cW+1) f (k+1) s)
       in
-      let rec pNeuronU inputs outputs p j s = match j with
-          s -> outputs
-        | _ -> let foo f.nbrInput in
-               let bar = pWeightU 0 inputs 0 p.neuronArr.(j) 0 foo in
-               let tmp = bar + p.neuronArr.(j).inputArr.(foo-1) * dBias in
-               BarDynArr.add outputs (evalFunction tmp 1.);
-               pNeuronU inputs outputs p (j+1)
+      (* simplification possible *)
+      let rec pNeuronU inputs outputs p j s =
+        if j = s then
+          outputs
+        else
+          (let foo = (BatDynArray.get p#gNeuronArr j)#gNbrInput in
+          let bar = pWeightU 0 inputs 0 (BatDynArray.get p#gNeuronArr j) 0 foo
+          in
+          let tmp = bar + 
+                   (BatDynArray.get
+                      (BatDynArray.get p#gNeuronArr j)#gInputArr (foo-1)) *
+                    dBias
+          in
+          BatDynArray.add outputs (self#evalFunction tmp 1.);
+          pNeuronU inputs outputs p (j+1) s)
       in
-      let rec pLayoutU inputs outputs i s = match i with
-          s -> outputs
-        | _ -> if (i>0) then
-                  inputs = outputs
-               BatDynArr.clear outputs;
-               pNeuronU inputs outputs layout.(i) 0 layout.(i).nbrNeuron;
-               pLayoutU inputs outputs (i+1) s
+      let rec pLayoutU inputs outputs i s =
+        let rec assign inp out e s n =
+          if (n > 0) && (e < s) then
+            (let foo = BatDynArray.get out e in
+               BatDynArray.set inp e foo;
+            assign inp out (e+1) s n)
+        in
+        assign inputs outputs 0 (BatDynArray.length outputs) i;
+        BatDynArray.clear outputs;
+        let foo = BatDynArray.get layoutArr i in
+        pNeuronU inputs outputs foo 0 foo#gNbrNeuron;
+        pLayoutU inputs outputs (i+1) s
       in
         pLayoutU input output 0 (nbrILayout+1)
-  
-  
-
-  val method evalFunction input res =
-    (*(1. /.(1. +. (exp (-.input /. res))))*)
-
 end
 
 
