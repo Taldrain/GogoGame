@@ -10,7 +10,7 @@ object (self)
   method get = if empty then raise (Global_not_initialized name) else value
   method unset = empty <- true
   method name = name
-  method isdef = empty
+  method is_empty = empty
   method opt = if empty then None else Some value
   method empty = empty
 end

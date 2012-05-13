@@ -22,7 +22,7 @@ let refresh_groups move =
 (* (BatBitSet.union board#get#blacks board#get#whites))                    *)
 
 let genmove c =
-  if not last_played#isdef
+  if last_played#is_empty
   then (* premier coup, on joue D4 *)
   { color = Black; vert = { pass = false; nb = 4; letter = 'D' }}
   else
