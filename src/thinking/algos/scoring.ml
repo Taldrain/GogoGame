@@ -2,17 +2,12 @@
 Implémente les fonctions de scoring
 **)
 open Entities
-  
 open Entities.Color
-  
 open Entities.Vertex
-  
 open Entities.Move
-  
 open Board
-  
 open BatPervasives
-  
+
 let blacks = ref (BatBitSet.empty ())
 
 and whites = ref (BatBitSet.empty ())

@@ -21,36 +21,39 @@ class node color id blk wht =
 object
   val mutable wins = 0
   val mutable visits = 0
-  val mutable is_expanded = false
+  val mutable is_child_expanded = false
+  val mutable is_sibling_expanded = false
   val blacks = blk
   val whites = wht
   val color = color
   val id = id
 
   val mutable child = None
+  val mutable sibling = None
+
   method color = color
   method visits = visits
-  method wins = wins
   method blacks = blk
   method whites = wht
-  method is_expanded = is_expanded
+  method is_child_expanded = is_child_expanded
+  method is_sibling_expanded = is_sibling_expanded
 
-  method sibling = match child with
+  method child = child
+
+  method sibling = match sibling with
     | None -> None
-    | Some child ->
-      let c = BatSet.choose child in
+    | Some set ->
+      let c = BatSet.choose set in
       let { color = _ ; vert = v } = c.mov in
       let id = int_of_v v in
       Some (new node (invert_color color) id c.blk c.wht )
 
-  method expand =
-    is_expanded <- true;
-    let col = if color = Black then White else Black in
+  method expand_children =
+    is_child_expanded <- true;
+    let col = invert_color color in
     let set = AlgoUtils.generate_next col {
       blk = blacks;
       wht = whites;
-      grp =[];
-      shp =[];
       mov = { color = col; vert =(vertex_of_id id)};
       }
     in
@@ -115,11 +118,10 @@ let playRandomGame node =
 
 let rec playSimulation n =
   let randomResult =
-    if not n#is_expanded && n#visits < 10 then
-      (* 10 simulations until chilren are expanded (saves memory) *)
+    if not n#is_child_expanded && n#visits < 10 then
       playRandomGame n
     else
-      (if not n#is_expanded then n#expand else ();
+      (if not n#is_child_expanded then n#expand_children else ();
        match n#sibling with
         | None -> failwith "next est a none, WTF ?!" (* ne doit jamais arriver *)
         | Some c -> let next = uctSelect c in invert_gameStatus (playSimulation next))

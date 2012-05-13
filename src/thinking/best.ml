@@ -11,11 +11,10 @@ open BatRMutex
 
 
 let best = ref (BatBitSet.empty (), BatBitSet.empty ())
+let lock = BatMutex.Mutex.create ()
 
-let set_best c =
-  best := c
-
-let get_best () = !best
+let set_best = BatMutex.Mutex.synchronize ~lock:lock (fun c -> best := c)
+let get_best = BatMutex.Mutex.synchronize ~lock:lock (fun () -> !best)
 
 let get_move board color =
   let (best_blacks,best_whites) = get_best () in
