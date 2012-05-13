@@ -47,7 +47,7 @@ struct
   let v ?(p=false) ~n ~l = { pass=p; nb=n; letter=l }
   
   let string_of_vertex { letter = l; nb = n; pass = b } =
-    if b then "pass" else (Char.escaped l) ^ (string_of_int (n + 1))
+    if b then "pass" else (Char.escaped l) ^ (string_of_int (n))
   
   let vertex_of_string str =
     if BatString.is_empty str
@@ -73,15 +73,18 @@ struct
     ((n > 0) &&
       ((n < boardSize) && ((Common.int_of_letter l) < boardSize)))
   
+  exception Int_of_pass
   let int_of_vertex bsize v =
-    if v.pass then (-1) else (bsize * (int_of_letter v.letter)) + (v.nb -1)
+    (assert (v.nb - 1 >= 0));
+    (assert (v.nb - 1 <= 12));
+    if v.pass then raise Int_of_pass else (bsize * (int_of_letter v.letter)) + (v.nb - 1)
   
   let int_of_v = (int_of_vertex 13)
   
   let vertex_of_int bsize i =
     let (q, r) = div_eucl i bsize
     in
-    try { pass = false; letter = letter_of_int q; nb = r; }
+    try { pass = false; letter = letter_of_int q; nb = r+1; }
     with
     | Invalid_alphabet_of_int ->
         raise (Vertex_letter_error (string_of_int q))
