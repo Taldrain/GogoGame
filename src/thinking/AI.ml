@@ -20,14 +20,20 @@ let refresh_groups move =
 let genmove c =
   let b = board#get in
   let best = UCT.uctSearch 50 c b#blacks b#whites in
-  let bitset = (
-    if c = Black then BatBitSet.differentiate_sym b#blacks best#blacks
-    else BatBitSet.differentiate_sym b#whites best#whites
-    )
+  let bitset =
+    if c = Black
+    then
+      (let bitset = BatBitSet.copy b#blacks in
+      BatBitSet.differentiate_sym bitset best#blacks;
+      bitset)
+    else
+      (let bitset = BatBitSet.copy b#whites in
+      BatBitSet.differentiate_sym bitset best#whites;
+      bitset)
   in
   match BatEnum.get (BatBitSet.enum bitset) with
     | None -> failwith "Pas de coup trouv�, WTF ?!"
-    | Some id -> { color = c; vert = (vertex_of_int id) }
+    | Some id -> { color = c; vert = (vertex_of_id id) }
 *)
 let genmove c =
   let b = board#get in

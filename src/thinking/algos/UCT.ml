@@ -7,6 +7,10 @@ On verra bien ce que ca va donner...
 open BatRandom
 open Entities
 open Entities.Color
+open Entities.Vertex
+open Entities.Move
+
+open AlgoUtils
 
 let seed = BatRandom.self_init ()
 let uctk = 0.44 (* sqrt (1/5) *)
@@ -15,9 +19,11 @@ class node color id blk wht =
 object
   val mutable wins = 0
   val mutable visits = 0
+  val mutable is_expanded = false
   val blacks = blk
   val whites = wht
   val color = color
+  val id = id
 
   val mutable child = None
   method color = color
@@ -25,28 +31,32 @@ object
   method wins = wins
   method blacks = blk
   method whites = wht
+  method is_expanded = is_expanded
 
   method sibling = match child with
     | None -> None
     | Some child ->
       let c = BatSet.choose child in
-      (new node (invert_color color) c.blk c.wht )
+      let { color = _ ; vert = v } = c.mov in
+      let id = int_of_v v in
+      Some (new node (invert_color color) id c.blk c.wht )
 
   method expand =
+    is_expanded <- true;
     let col = if color = Black then White else Black in
-    let set = AlgoUtils.generate_next {
+    let set = AlgoUtils.generate_next col {
       blk = blacks;
       wht = whites;
       grp =[];
       shp =[];
-      mov = { col = col; vert =(vertex_of_int id)};
+      mov = { color = col; vert =(vertex_of_id id)};
       }
     in
     child <- Some set
 
   method update result =
     visits <- visits + 1;
-    if result = Win then wins <- wins + value else ()
+    if result = Win then wins <- wins + 1 else ()
 
   method getWinRate =
     if visits > 0
@@ -60,7 +70,7 @@ let get_best_child root =
     | Some child -> if child#visits > best#visits then find child child#sibling
         else find best child#sibling
   in
-  find root root.child
+  find root root#sibling
 
 let uctSelect node =
   let rec select next best_uct res =
@@ -71,42 +81,46 @@ let uctSelect node =
           if next#visits > 0 then
             let uct = uctk *. (sqrt (log ((float_of_int node#visits) /. (float_of_int next#visits))))
             in
-            next#getWinRate + uct
+            (int_of_float next#getWinRate) + (int_of_float uct)
           else
             10000 + 1000 * (BatRandom.int 1000)
         in
         if uctvalue > best_uct then select next#sibling uctvalue next
         else select next#sibling best_uct res
   in
-  select node#child 0 0
+  select node#sibling 0 node
 
 let playRandomGame node =
+  let rec random_node node =
+    match node#child with
+      | None -> node#expand; random_node node
+      | Some c -> c
+  in
   let game_over n =
     (BatBitSet.count n#blacks) + (BatBitSet.count n#whites) >= 167
   in
   let rec play node =
-    if not (game_over node) then play (random_node ()) else node
+    if not (game_over node) then play (random_node node) else node
   in
   let (blk,wht) = Scoring.score node#blacks node#whites in
   let comp = if node#color = White then (<) else (>) in
   if comp blk wht then Win else Lose
 
-let playSimulation (n: node) =
+let rec playSimulation n =
   let randomResult =
-    if n#child = None && n#visits < 10 then
+    if not n#is_expanded && n#visits < 10 then
       (* 10 simulations until chilren are expanded (saves memory) *)
-      playRandomGame node
+      playRandomGame n
     else
-      (if n#child = None then n#expand else ();
-        let next = uctSelect(n) in
-        if next = None then raise failwith "next est a none, WTF ?!"
-        else
-          inv (playSimulation next))
+      (if not n#is_expanded then n#expand else ();
+       match n#sibling with
+        | None -> failwith "next est a none, WTF ?!"
+        | Some c -> let next = uctSelect c in invert_gameStatus (playSimulation next))
   in
-  n#update randomResult
+  n#update randomResult; randomResult
 
 let uctSearch numSim color blacks whites =
-  let root = new node blacks whites in
+  let root = new node color 0 blacks whites in
   for i = 0 to numSim do
     playSimulation root
   done;
