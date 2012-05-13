@@ -126,9 +126,9 @@ let zigzag_allongement () = (* setup *)
     Engine.play { color = Black; vert = v3; };
     Engine.play { color = Black; vert = v4; };
     Engine.play { color = Black; vert = v5; };
-      (*Playing.play_v ~vertices: [ v1; v2; v3; v4; v5 ];*)
-      test_count ~expected: 1;
-      are_in_same_group ~color: Black ~vertices: [ v1; v2; v3; v4; v5 ]))
+    Playing.play_v ~vertices: [ v1; v2; v3; v4; v5 ];
+         test_count ~expected: 1; 
+      are_in_same_group ~color: Black ~vertices: [ v1; v2; v3; v4;v5 ]))
 
 let reverse_allongement () = (* setup *)
   (Board_init.self_init ();
