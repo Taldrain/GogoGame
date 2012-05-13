@@ -27,16 +27,23 @@ let down i = i - 1
 let right i = i + 13
 let left i = i - 13
 
+
+let testUp id = (id mod 13) <> 12
+let testDw id = (id mod 13) <> 0
+let testLf id = id > 12
+let testRg id = id < 156
+
 let lookLf i stones = BatBitSet.is_set stones (left i)
 let lookRg i stones = BatBitSet.is_set stones (right i)
 let lookUp i stones = BatBitSet.is_set stones (up i)
 let lookDw i stones = BatBitSet.is_set stones (down i)
 
 (* version safe du lookup *)
-let slookLf i stones = i > 12 && BatBitSet.is_set stones (left i)
-let slookRg i stones = i < 156 && BatBitSet.is_set stones (right i)
-let slookUp i stones = (i mod 13) <> 12 && BatBitSet.is_set stones (up i)
-let slookDw i stones = (i mod 13) <> 0 && BatBitSet.is_set stones (down i)
+let slookLf i stones = testLf i && BatBitSet.is_set stones (left i)
+let slookRg i stones = testRg i && BatBitSet.is_set stones (right i)
+let slookUp i stones = testUp i && BatBitSet.is_set stones (up i)
+let slookDw i stones = testDw i && BatBitSet.is_set stones (down i)
+
 
 let less_liberty s = (*Utilitée a verifier*)
   let unstone x = (Globals.board#get#unset_stone { color = Black; vert = (vertex_of_int 13 x) }) in
@@ -60,9 +67,9 @@ let make_group id stones =
         else
           let seen = BatISet.add s seen in
           match (Board.color_of_node (Globals.board#get#get s)) with
-          | Empty -> lookup to_look (found, liberties +1) seen
-          | c when c <> color -> less_liberty s; lookup to_look (found, liberties) seen
-          | _ ->
+          | Empty -> Printf.printf "+lib"; lookup to_look (found, liberties +1) seen
+          | c when c <> color ->less_liberty s; lookup to_look (found, liberties) seen (*a checker*)
+          | _ -> Printf.printf "same_color";
               let fnd = ref found in
               (begin
                   let l = ref [] in
@@ -74,6 +81,10 @@ let make_group id stones =
                     l := (up id)::!l;
                   if slookDw id stones then
                     l := (down id)::!l;
+                    (BatEnum.push to_look) (left id);
+                    (BatEnum.push to_look) (right id);
+                    (BatEnum.push to_look) (up id);
+                    (BatEnum.push to_look) (down id);
                   List.iter (BatEnum.push to_look) !l;
                   List.iter (fun x -> fnd := BatISet.add x !fnd) !l;
                 end;
@@ -82,11 +93,12 @@ let make_group id stones =
   let enm = BatEnum.empty () in
   let seen = BatISet.empty in
   let found = BatISet.empty in
-  BatEnum.push enm id;
   let refresh_groups grp =
   idx_ref_groups := !idx_ref_groups + 1;
   Array.set ref_groups id !idx_ref_groups;
   Array.set !groups !idx_ref_groups grp;
   in
+  BatEnum.push enm id;
+  Printf.printf "%d\n" id;
   refresh_groups (lookup enm (found, 0) seen)
   

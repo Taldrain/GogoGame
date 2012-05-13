@@ -13,6 +13,8 @@ open Entities.Vertex
 
 open Entities.Color
 
+open Group_again
+
 open Board
 
 open Globals
@@ -87,25 +89,15 @@ let multiples_monoids () = (* setup *)
       test_monoids ~vertices: l))
 
 let large_multiple_monoids () =
-  let count = ref 0 in
-  let rec generate_vertices { pass = _; nb = n; letter = l } =
-    if n >= 14 then { pass = true; nb = 1; letter = 'A' }
-    else
-      (match l with
-        | 'M' -> { pass = false; nb = n + 1; letter = 'A' }
-        | 'N' -> { pass = false; nb = n + 1; letter = 'B'; }
-        | 'I' -> generate_vertices { pass = false; nb = n; letter = 'J';}
-        | c -> { pass = false; nb = n; letter = Char.chr (2 + (Char.code c)); })
-         
-  in
+  let count = ref 1 in
+  let next_id id = id + 2 in
   let fill_board () =
-    let v = ref { pass = false; nb = 1; letter = 'A'; }
-    
-    and count = ref 0
-    in
-    (Engine.play { color = Black; vert = !v; };
-      while not !v.pass do v := generate_vertices !v;
-        Engine.play { color = Black; vert = !v; }; incr count done)
+    let my_id = ref 0 in
+    (Engine.play { color = Black; vert = vertex_of_id !my_id; });
+    (while !my_id < 167 do
+        my_id := next_id !my_id;
+        (Engine.play { color = Black; vert = vertex_of_id !my_id; });
+        incr count done)
   in
   (* setup *)
   (Board_init.self_init ();
@@ -121,6 +113,9 @@ let simple_allongement () = (* setup *)
     (* tests *)
     (Engine.play { color = Black; vert = v1; };
       Engine.play { color = Black; vert = v2; };
+      let { lib = libert; stones = stn} =  (Group_again.group_of_stone (Vertex.int_of_vertex 13 v2)) in
+      let { lib = libert1; stones = stn1} =  (Group_again.group_of_stone (Vertex.int_of_vertex 13 v1)) in
+      Printf.printf "//////// => %d %d <=" libert1 libert;
       test_count ~expected: 1;
       are_in_same_group ~color: Black ~vertices: [ v1; v2 ]))
 
@@ -155,11 +150,10 @@ let reverse_allongement () = (* setup *)
 let test_fusion () = todo "not yet"
 
 let suite () =
-  "groupes" >:::
-  [ "groupes monoides" >:::
-  [ "stupides" >:: stupid_monoid; "multiples" >:: multiples_monoids;
-  "large" >:: large_multiple_monoids ];
+  (* "groupes" >::: [ "groupes monoides" >::: [ "stupides" >::             *)
+  (* stupid_monoid; "multiples" >:: multiples_monoids; "large" >::         *)
+  (* large_multiple_monoids ];                                             *)
   "allongement de groupes" >:::
-  [ "simple" >:: simple_allongement; "zigzag" >:: zigzag_allongement;
-  "renvers�" >:: reverse_allongement ];
-  "fusion de deux groupes" >:: test_fusion ]
+  [ "simple" >:: simple_allongement; ](*"zigzag" >:: zigzag_allongement;*)
+(* "renversement" >:: reverse_allongement ]; "fusion de deux groupes"    *)
+(* >:: test_fusion]                                                      *)
