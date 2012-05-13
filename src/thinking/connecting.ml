@@ -28,12 +28,19 @@ object(self)
    * [n1,n2,...] n is a float
    *)
   val mutable vecA = BatDynArray.create()
+  (*(* good result for the input
+   * [n1,n2,...]
+   *)
+  val mutable vecN = BatDynArray.create()*)
   val mutable nbrCycle = nbrC
   val mutable bestW = BatDynArray.create()
 
 
+  method gBestW = bestW
+
   (* init the array of input
-   * ex: [((i1, i2, i3), out),...]
+   * ex: [((i1, i2, i3)(*, out*)),...]
+   * and the good result -> Nope
    *)
   method read = 0
 
