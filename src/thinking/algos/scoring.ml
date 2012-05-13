@@ -171,7 +171,7 @@ let mark_score () =
           mark_stone scored score (s + 1))) in
   let rec mark_territory seen scored score s =
     (if s = 169
-     then (scored, score)
+     then (scored,score)
      else
        if BatBitSet.is_set seen s
        then mark_territory seen scored score (s + 1)
@@ -179,15 +179,16 @@ let mark_score () =
          (let (territory, terr) = is_territory Black s
           in
             if territory
-            then (set_all_score scored score Black terr; (scored,score))
+            then (set_all_score scored score Black terr;(score,score))
             else
               (clear seen terr;
-               (let (territory, terr) = is_territory White s
+               let (territory, terr) = is_territory White s
                 in
                   if territory
-                  then (set_all_score scored score White terr; (scored,score))
-                  else (clear seen terr; (scored,score)))));
-     mark_territory seen scored score (s + 1)) in
+                  then (set_all_score scored score White terr;(scored,score))
+                  else (clear seen terr; mark_territory seen scored score (s + 1))
+               )))
+  in
   let scored = BatBitSet.create 168 and score = BatBitSet.create 168 in
   let (scored, score) = mark_stone scored score 0
   in mark_territory (BatBitSet.create 168) scored score 0

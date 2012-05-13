@@ -132,6 +132,6 @@ let uctSearch ~nbSim ~color ~last_move ~blacks ~whites ~channel () =
   reader#set channel;
   let root = new node (invert_color color) last_move blacks whites in
   for i = 0 to nbSim do
-    playSimulation root
+    let _ = playSimulation root in ()
   done;
   get_best_child root

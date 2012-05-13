@@ -24,7 +24,6 @@ let int_of_char c =
 @return la place dans l'alphabet latin de cette lettre
 **)
 let int_of_letter c =
-  let skip_i c = if c < 8 then c else c - 1 in
   let code = (Char.code c) - 65 in
   let skip_i c = if code < 8 then code else code - 1 in
   (assert (code >= 0);
@@ -79,3 +78,4 @@ let bitset_set_nth b n =
    let b = BatBitSet.copy b in (BatBitSet.put b true n;b)
 let bitset_unset_nth b n =
    let b = BatBitSet.copy b in (BatBitSet.put b false n;b)
+

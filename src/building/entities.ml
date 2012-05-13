@@ -29,11 +29,16 @@ struct
     | White -> "W"
     | Black -> "B"
     | Empty -> raise Color_invalid_color
-
+  
   let invert_color = function
     | White -> Black
     | Black -> White
     | Empty -> Empty
+  
+  let color_of_blk_wht blk wht s =
+    if BatBitSet.is_set blk s then Black
+    else if BatBitSet.is_set wht s then White
+    else Empty
 end
 
 module Vertex =
@@ -44,7 +49,7 @@ struct
   
   exception Vertex_number_error of char
   
-  let v ?(p=false) ~n ~l = { pass=p; nb=n; letter=l }
+  let v ?(p = false) ~n ~l = { pass = p; nb = n; letter = l }
   
   let string_of_vertex { letter = l; nb = n; pass = b } =
     if b then "pass" else (Char.escaped l) ^ (string_of_int (n))
@@ -84,13 +89,13 @@ struct
   let vertex_of_int bsize i =
     let (q, r) = div_eucl i bsize
     in
-    try { pass = false; letter = letter_of_int q; nb = r+1; }
+    try { pass = false; letter = letter_of_int q; nb = r +1; }
     with
     | Invalid_alphabet_of_int ->
         raise (Vertex_letter_error (string_of_int q))
-
+  
   let vertex_of_id = (vertex_of_int 13)
-
+  
   let vertex_is_a_pass { nb = _; letter = _; pass = p } = p
   
 end
@@ -116,9 +121,10 @@ struct
   
   let move_is_a_pass { color = _; vert = v } = Vertex.vertex_is_a_pass v
   
-  (* let move_of_string_plus str = let { color = c; vert = { Vertex.letter = *)
-  (* l; Vertex.nb = n; Vertex.pass = p } } = move_of_string str in { color = *)
-  (* c; vert = { Vertex.letter = l; Vertex.nb = n - 1; Vertex.pass = p; }; } *)
+  (* let move_of_string_plus str = let { color = c; vert = { Vertex.letter *)
+  (* = l; Vertex.nb = n; Vertex.pass = p } } = move_of_string str in {     *)
+  (* color = c; vert = { Vertex.letter = l; Vertex.nb = n - 1; Vertex.pass *)
+  (* = p; }; }                                                             *)
   
 end
 

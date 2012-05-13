@@ -43,7 +43,7 @@ let generate_next col s =
           else (s.blk, bitset_set_nth s.wht i)
         (* and g = groups_refresh s.grp *)
         (* and s = shapes_refresh s.shp *)
-        and m = { color = col ; vert = (vertex_of_id i) }
+        (* and m = { color = col ; vert = (vertex_of_id i) } *)
         (* in let score = eval (s.scr,blacks,whites,g,s) *)
         in
         gen (next_empty i) (BatSet.add

@@ -15,18 +15,20 @@ let _ =
   let _ = Thread.sigmask Unix.SIG_BLOCK [Sys.sigalrm] in ()
 
 let refresh_groups move =
-  let { color = c; vert ={ pass = p; nb = n; letter = l }} = move in
+  let { color = c; vert = v } = move in
+  let { pass = p ; nb = _ ; letter = _ } = v in
   if p then ()
-  else ()
-(* (Group_again.make_group (int_of_vertex 13 ({pass=p;nb=n;letter=l}))     *)
-(* (BatBitSet.union board#get#blacks board#get#whites))                    *)
+  else
+    Group_again.make_group c board#get#blacks board#get#whites
+      (int_of_v v)
+(* (BatBitSet.union board#get#blacks board#get#whites)) *)
 
 let genmove c =
   if last_played#is_empty
   then (* premier coup, on joue D4 *)
   { color = Black; vert = { pass = false; nb = 4; letter = 'D' }}
   else
-    (Timer.run ();
+    (let _ = Timer.run () in
       let b = board#get in
       let ch = Event.new_channel () in
       let writer_end () = Event.poll (Event.send ch ())
