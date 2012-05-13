@@ -36,7 +36,7 @@ let mem = ref BatIMap.empty
 let get_color_terr s =
   let rec search_color open_list closed_list =
     match BatEnum.get open_list with
-    | None -> failwith "couleur de territoire non trouvée"
+    | None -> Empty
     | Some s ->
         if BatBitSet.is_set closed_list s
         then search_color open_list closed_list

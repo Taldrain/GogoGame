@@ -15,6 +15,8 @@ open AlgoUtils
 let seed = BatRandom.self_init ()
 let uctk = 0.44 (* sqrt (1/5) *)
 
+let reader : (unit -> unit option) Global.global = new Global.global "reader"
+
 class node color id blk wht =
 object
   val mutable wins = 0
@@ -72,8 +74,13 @@ let get_best_child root =
   in
   find root root#sibling
 
+
 let uctSelect node =
   let rec select next best_uct res =
+    Best.set_best (res#blacks,res#whites);
+    match reader#get () with
+      | Some _ -> (Thread.exit ();failwith "plop")
+      | None ->
     match next with
     | None -> res
     | Some next ->
@@ -114,14 +121,15 @@ let rec playSimulation n =
     else
       (if not n#is_expanded then n#expand else ();
        match n#sibling with
-        | None -> failwith "next est a none, WTF ?!"
+        | None -> failwith "next est a none, WTF ?!" (* ne doit jamais arriver *)
         | Some c -> let next = uctSelect c in invert_gameStatus (playSimulation next))
   in
   n#update randomResult; randomResult
 
-let uctSearch numSim color blacks whites =
-  let root = new node color 0 blacks whites in
-  for i = 0 to numSim do
+let uctSearch ~nbSim ~color ~last_move ~blacks ~whites ~channel () =
+  reader#set channel;
+  let root = new node (invert_color color) last_move blacks whites in
+  for i = 0 to nbSim do
     playSimulation root
   done;
   get_best_child root

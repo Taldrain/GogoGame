@@ -1,1 +1,1 @@
-<*>: warn_A, package(batteries)
+<*>: thread, use_unix, warn_A, package(batteries)
