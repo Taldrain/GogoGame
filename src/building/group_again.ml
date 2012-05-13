@@ -9,9 +9,8 @@ open Entities.Color
 type group = {
   (* count: int; *)
   mutable lib: int;
-  stones: int BatList.t 
+  stones: int BatList.t
 }
-
 
 let groups = ref (Array.make 100 { lib = max_int; stones = [] })    (* les groupes *)
 let ref_groups = Array.make 169 0  (* talbeau d'id, comme des pointeurs *)
@@ -49,7 +48,6 @@ let less_liberty s = (*Utilitée a verifier*)
     List.iter unstone (group_of_stone s).stones
   else
     ()
-
 
 let make_group id stones =
   let color = Globals.color#get in
@@ -101,24 +99,28 @@ let make_group id stones =
               lookup to_look (!fnd, liberties) seen
   in
   let refresh_groups group =
-      let rec num_of_groups stones l = 
-        match stones with
+    idx_ref_groups := 1 + !idx_ref_groups;
+    let rec num_of_groups stones l =
+      match stones with
       | [] -> 0
-      | s::t -> if List.exists (fun x -> x = (group_of_stone s)) l then 
-                   ((ref_groups.(s) <- ref_groups.(id));
-                    num_of_groups t l)
-                  else
-                    (ref_groups.(s) <- ref_groups.(id);
-                    1 + (num_of_groups t ((group_of_stone s)::l)))
-      in
-      let { lib = libert; stones = stn } = group in
-      idx_ref_groups :=  1 + !idx_ref_groups - (num_of_groups stn []);
-      Printf.printf "nb groupes %d| id %d \n" !idx_ref_groups id; (*TODO*) 
+      | s:: t -> if List.exists (fun x -> x = (group_of_stone s)) l then
+            (begin
+                ((ref_groups.(s) <- ref_groups.(id));
+                  num_of_groups t l)
+                
+              end;)
+          else
+            (begin
+                (ref_groups.(s) <- ref_groups.(id);
+                  1 + (num_of_groups t ((group_of_stone s):: l)))
+              end;)
+    in
+    let { lib = libert; stones = stn } = group in
     Array.set ref_groups id !idx_ref_groups;
+    idx_ref_groups := !idx_ref_groups - (num_of_groups stn []);
     Array.set !groups !idx_ref_groups group;
   in
   let enm = BatEnum.empty () in
   let seen = BatISet.empty in
   BatEnum.push enm id;
   refresh_groups (lookup enm ([], 0) seen)
-  

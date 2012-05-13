@@ -2,24 +2,16 @@
 TA TA TAAAAAM le test des groupes
 **)
 open OUnit
-
 open Printf
-
 open Entities
-
 open Entities.Move
-
 open Entities.Vertex
-
 open Entities.Color
-
 open Group_again
-
 open Board
-
 open Globals
-
 open Group
+open BatPervasives
 
 let test_count ~expected =
   let count = !Group_again.idx_ref_groups
@@ -35,20 +27,22 @@ let test_monoids ~vertices =
     (List.for_all (fun m -> (Group_again.group_of_stone m) <> (Group_again.group_zero () ) ) vertices)
 
 let are_in_same_group ~color ~vertices =
-  let vertices = List.map (int_of_vertex 13) vertices in
-  (Group_again.make_group (List.hd vertices) (BatBitSet.union board#get#blacks board#get#whites));
-  let g = ref (Group_again.group_of_stone (List.hd vertices)) in
-  let set = ref false
-  in
-  assert_bool
-    "groupes mal fusionnes (pierres ne sont pas dans le meme groupe)"
-    (List.for_all
-        (fun m ->
-              let find = Group_again.group_of_stone m
-              in
-              (find <> Group_again.group_zero ()) &&
-              (if !set then (g := find; true) else !g = find))
-        vertices)
+  let head = List.hd vertices in
+  let g = ref ((int_of_v |- Group_again.group_of_stone) head) in
+  List.iter
+    (fun m ->
+          let s = int_of_v m in
+          let find = Group_again.group_of_stone s
+          in
+          assert_bool
+            (Printf.sprintf
+                "{%s} est dans le groupe zero" (string_of_vertex m))
+            (find <> Group_again.group_zero ());
+          assert_bool
+            (Printf.sprintf "{%s} n'est pas dans le groupe de {%s}"
+                (string_of_vertex m) (string_of_vertex head))
+            (!g = find))
+    vertices
 
 let stupid_monoid () = (* setup *)
   (Board_init.self_init ();
@@ -113,9 +107,6 @@ let simple_allongement () = (* setup *)
     (* tests *)
     (Engine.play { color = Black; vert = v1; };
       Engine.play { color = Black; vert = v2; };
-      let { lib = libert; stones = stn} =  (Group_again.group_of_stone (Vertex.int_of_vertex 13 v2)) in
-      let { lib = libert1; stones = stn1} =  (Group_again.group_of_stone (Vertex.int_of_vertex 13 v1)) in
-      Printf.printf "//////// => %d %d <=" libert1 libert;
       test_count ~expected: 1;
       are_in_same_group ~color: Black ~vertices: [ v1; v2 ]))
 
@@ -130,7 +121,12 @@ let zigzag_allongement () = (* setup *)
     and v5 = { pass = false; nb = 9; letter = 'F'; }
     in
     (* tests *)
-    (Playing.play_v ~vertices: [ v1; v2; v3; v4; v5 ];
+    (Engine.play { color = Black; vert = v1; };
+    Engine.play { color = Black; vert = v2; };
+    Engine.play { color = Black; vert = v3; };
+    Engine.play { color = Black; vert = v4; };
+    Engine.play { color = Black; vert = v5; };
+      (*Playing.play_v ~vertices: [ v1; v2; v3; v4; v5 ];*)
       test_count ~expected: 1;
       are_in_same_group ~color: Black ~vertices: [ v1; v2; v3; v4; v5 ]))
 
@@ -143,17 +139,20 @@ let reverse_allongement () = (* setup *)
     and v3 = { pass = false; nb = 6; letter = 'D'; }
     in
     (* tests *)
-    (Playing.play_v ~vertices: [ v1; v2; v3 ];
+    (Engine.play { color = Black; vert = v1; };
+    Engine.play { color = Black; vert = v2; };
+    Engine.play { color = Black; vert = v3; };
+    (* (Playing.play_v ~vertices: [ v1; v2; v3 ];*)
       test_count ~expected: 1;
       are_in_same_group ~color: Black ~vertices: [ v1; v2; v3 ]))
 
 let test_fusion () = todo "not yet"
 
 let suite () =
-  (* "groupes" >::: [ "groupes monoides" >::: [ "stupides" >::             *)
-  (* stupid_monoid; "multiples" >:: multiples_monoids; "large" >::         *)
-  (* large_multiple_monoids ];                                             *)
+  "groupes" >::: [ "groupes monoides" >::: [ "stupides" >::
+  stupid_monoid; "multiples" >:: multiples_monoids; "large" >::
+  large_multiple_monoids ];
   "allongement de groupes" >:::
-  [ "simple" >:: simple_allongement; ](*"zigzag" >:: zigzag_allongement;*)
-(* "renversement" >:: reverse_allongement ]; "fusion de deux groupes"    *)
-(* >:: test_fusion]                                                      *)
+  [ "simple" >:: simple_allongement;"zigzag" >:: zigzag_allongement;
+  "renversement" >:: reverse_allongement ; "fusion de deux groupes"
+  >:: test_fusion]]
