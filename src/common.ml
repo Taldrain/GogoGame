@@ -79,13 +79,3 @@ let bitset_set_nth b n =
    let b = BatBitSet.copy b in (BatBitSet.put b true n;b)
 let bitset_unset_nth b n =
    let b = BatBitSet.copy b in (BatBitSet.put b false n;b)
-
-(* Random float, 0 to 1. *)
-let randF() = (BatRandom.float 1.1)
-              
-(* Random float, -1. to 1. *)
-let randC() = randF() -. randF()
-
-(* pas tellement utile *)
-let randI x= (BatRandom.int x)
-

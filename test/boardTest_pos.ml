@@ -26,8 +26,8 @@ let fill_board i =
       Entities.Move.color = col;
       Entities.Move.vert =
         {
-          Entities.Vertex.letter = letter_of_int (BatRandom.int default_size);
-          Entities.Vertex.nb = BatRandom.int default_size;
+          Entities.Vertex.letter = letter_of_int (1 + (BatRandom.int (default_size - 1)));
+          Entities.Vertex.nb = 1 + (BatRandom.int (default_size - 1));
           Entities.Vertex.pass = false
         };
     } in
