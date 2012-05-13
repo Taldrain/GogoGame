@@ -17,28 +17,29 @@ let _ =
 let refresh_groups move =
   let {color=c; vert={pass=p;nb=n;letter=l}} = move in
   if p then ()
-  else ()
-    (* (Group_again.make_group (int_of_vertex 13 ({pass=p;nb=n;letter=l})) (BatBitSet.union board#get#blacks board#get#whites)) *)
+  else 
+    (Group_again.make_group (int_of_vertex 13 ({pass=p;nb=n;letter=l})) (BatBitSet.union board#get#blacks board#get#whites))
 
-
+                                                       
 let genmove c =
-  Timer.run ();
-  let b = board#get in
-  let ch = Event.new_channel () in
-  let writer_end () = Event.poll (Event.send ch ())
-  and reader_end () = Event.poll (Event.receive ch) in
-  let _ =
-    Thread.create (UCT.uctSearch
-                ~nbSim:50
-                ~color:c
-                ~last_move:(Globals.last_played#get)
-                ~blacks:b#blacks
-                ~whites:b#whites
-                ~channel:(reader_end)) ()
-  in
-  let _ = Thread.wait_signal [Sys.sigalrm] in
-  let _ = writer_end () in
-  Best.get_move b c
+    assert false                                        
+(*   Timer.run ();                                        *)
+(*   let b = board#get in                                 *)
+(*   let ch = Event.new_channel () in                     *)
+(*   let writer_end () = Event.poll (Event.send ch ())    *)
+(*   and reader_end () = Event.poll (Event.receive ch) in *)
+(*   let _ =                                              *)
+(*     Thread.create (UCT.uctSearch                       *)
+(*                 ~nbSim:50                              *)
+(*                 ~color:c                               *)
+(*                 ~last_move:(Globals.last_played#get)   *)
+(*                 ~blacks:b#blacks                       *)
+(*                 ~whites:b#whites                       *)
+(*                 ~channel:(reader_end)) ()              *)
+(*   in                                                   *)
+(*   let _ = Thread.wait_signal [Sys.sigalrm] in          *)
+(*   let _ = writer_end () in                             *)
+(*   Best.get_move b c                                    *)
 
 
 (* let genmove c =                                                               *)

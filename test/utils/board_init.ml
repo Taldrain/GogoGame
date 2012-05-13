@@ -9,7 +9,8 @@ open Entities.Move
 
 let self_init () =
   Engine.set_boardsize 13;
-  Engine.set_komi 6.5
+  Engine.set_komi 6.5;
+  ()
 
 let classic_openning () =
   let s = 13 in

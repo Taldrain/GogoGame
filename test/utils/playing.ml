@@ -16,4 +16,4 @@ let rec play ~moves = match moves with
 
 let rec play_v ~vertices = match vertices with
   | [] -> ()
-  | v::l -> Engine.play (coloring v)
+  | v::l -> Engine.play (coloring v); 
