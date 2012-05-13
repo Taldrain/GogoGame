@@ -109,7 +109,7 @@ object(self)
     in pLayout ar 0 (nbrILayout + 1)
 
   (* get the nbr total of weight *)
-  method getNbrWeight =
+  (*method getNbrWeight =
     let rec pWeight yar k s =
       if k = s then
         yar
@@ -131,7 +131,7 @@ object(self)
         (let foo = BatDynArray.get layoutArr i in
         pNeuron yar foo 0 foo#gNbrNeuron;
         pLayout yar (i+1) s)
-    in pLayout 0 0 (nbrILayout + 1)
+    in pLayout 0 0 (nbrILayout + 1)*)
 
   (* replace the weight with the one in the dynarr t *)
   method putWeight t =

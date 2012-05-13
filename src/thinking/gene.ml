@@ -10,26 +10,18 @@ object
   method gFitness = fitness
 end
 
-let constructG cl pop = 
-  let fool = BatDynArray.create () in
-  let rec vCL ar j s = 
-    if j = s then
-      ar
-    else
-      (BatDynArray.add (ar#gVecWeight) (randC());
-      vCL ar (j+1) s)
-  in
-  let rec vPS yar i s cL =
+let constructG cl pop c f = 
+  let rec vPS yar i s cL c f =
     if i = s then
       yar
     else
-       (BatDynArray.add yar (new genome (BatDynArray.create()) 0.);
-       vCL (BatDynArray.get yar i) 0 cL;
-       vPS yar (i+1) s cL)
-  in vPS fool 0 pop cl
+       (BatDynArray.add yar (new genome (BatDynArray.get c i)
+                               (BatDynArray.get f i));
+       vPS yar (i+1) s cL c f)
+  in vPS (BatDynArray.create()) 0 pop cl c f
 
-class geneAlgo populos mRate cRate chromoLength mP = 
-  let crVpop = constructG chromoLength populos in
+class geneAlgo populos mRate cRate chromoLength mP mW mF = 
+  let crVpop = constructG chromoLength populos mW mF in
 object(self)
   val mutable vPopu = crVpop
   val mutable popSize = populos
@@ -44,6 +36,8 @@ object(self)
   val mutable cntGeneration = 0
   val mutable maxPerturbation = mP
 
+  method gPopu = vPopu
+
   method sVPopu s = vPopu <- s
   method sTotalFitness s = totalFitness <- s
   method sBestFitness s = bestFitness <- s
@@ -52,6 +46,16 @@ object(self)
   method sCntGeneration s = cntGeneration <- s
   method sBestGenome s = bestGenome <- s
 
+  method gW =
+    let foo = BatDynArray.create() in
+    let rec gw_rec yar i s =
+      if i = s then
+        yar
+      else
+        (let bar = (BatDynArray.get vPopu i)#gVecWeight in
+           BatDynArray.add yar bar;
+        gw_rec yar (i+1) s)
+    in gw_rec foo 0 (BatDynArray.length vPopu)
 
   method plusGene =
     self#sCntGeneration (1+cntGeneration)
@@ -133,9 +137,8 @@ object(self)
       in on mom dad child1 child2 cp (BatDynArray.length mom);
       (child1, child2)
     
-  method cycle oldPop =
-    self#sVPopu oldPop;
-    self#reset;
+  method cycle =
+    (*self#reset;*)
     self#sort vPopu;
     self#fndWBAT;
     let nPop = BatDynArray.create() in
@@ -155,7 +158,7 @@ object(self)
         BatDynArray.add nP (new genome c2 0.);
         self#plusGene;
         finalSolution oP nP)
-    in finalSolution oldPop nPop;
+    in finalSolution vPopu nPop;
     self#sVPopu nPop;
     nPop
 
