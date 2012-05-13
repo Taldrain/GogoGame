@@ -64,7 +64,7 @@ let make_a_play m =
   if move_is_a_pass m then Globals.last_is_pass#set true
   else Globals.last_is_pass#set false;
   AI.refresh_groups m
-    
+
 (* Input: list de move
  * Output: Place les pions sans mettre a jour l'historique -> gtp
  *)

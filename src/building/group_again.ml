@@ -41,7 +41,7 @@ let slookRg i stones = testRg i && BatBitSet.is_set stones (right i)
 let slookUp i stones = testUp i && BatBitSet.is_set stones (up i)
 let slookDw i stones = testDw i && BatBitSet.is_set stones (down i)
 
-let less_liberty s = (*Utilitée a verifier*)
+let less_liberty s = (*Utilitï¿½e a verifier*)
   let unstone x = (Globals.board#get#unset_stone { color = Black; vert = (vertex_of_int 13 x) }) in
   (group_of_stone s).lib <- (group_of_stone s).lib -1;
   if (group_of_stone s).lib < 0 then

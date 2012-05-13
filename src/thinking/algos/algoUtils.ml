@@ -11,20 +11,18 @@ type state =
   {
     blk : BatBitSet.t;
     wht : BatBitSet.t;
-    grp : (Group.group list);
-    shp : (((int -> int) array) list);
+    (* grp : (Group.group list);          *)
+    (* shp : (((int -> int) array) list); *)
     mov : Entities.Move.t;
-    (* scr : BatArray.t *)
   }
 
-let state black white group shape move (*score*) =
+let state black white move =
   {
     blk = black;
     wht = white;
-    grp = group;
-    shp = shape;
+    (* grp = group; *)
+    (* shp = shape; *)
     mov = move;
-  (* scr = score; *)
   }
 
 let groups_refresh grp = grp

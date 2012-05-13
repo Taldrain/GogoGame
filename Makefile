@@ -9,7 +9,7 @@ ifdef NEED_FOR_SPEED
 endif
 
 INC := -I src -I src/building -I src/talking -I src/thinking -I src/thinking/algos
-PKG := -pkg batteries
+PKG := -pkg batteries -tag thread
 
 CC := ocamlbuild
 COMPILE := $(CC) $(FLAGS) $(PKG) $(INC)
