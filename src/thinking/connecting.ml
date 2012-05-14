@@ -1,6 +1,8 @@
 open Neural_net
 open Gene
 
+
+
 let cstrNN ni no nl nnl db s =
   let foo = BatDynArray.create() in
   let rec cst_rec yar ni no nl nnl db i s =
@@ -15,10 +17,10 @@ let cstrNN ni no nl nnl db s =
 
 
 
-class assuming_control ni no nl nnl db nbrP nbrC =
-  let cstrNN = ni no nl nnl db nbrP nbrC in
+class assuming_control ni no nl nnl db nbrP nbrC (t: float BatDynArray.t) = 
+  let foo = (cstrNN ni no nl nnl db nbrP) in
 object(self)
-  val mutable nN = cstrNN
+  val mutable nN = foo
   val mutable input = BatDynArray.create()
   (* array of weight for each node
    * [[w1,w2,w3,...],...]
@@ -28,21 +30,43 @@ object(self)
    * [n1,n2,...] n is a float
    *)
   val mutable vecA = BatDynArray.create()
-  (*(* good result for the input
-   * [n1,n2,...]
-   *)
-  val mutable vecN = BatDynArray.create()*)
   val mutable nbrCycle = nbrC
-  val mutable bestW = BatDynArray.create()
+  val mutable bestW = t
+  val mutable nbrW = ni
 
 
-  method gBestW = bestW
+  method gBestW =
+    (*if (BatDynArray.empty bestW) then
+      invalid_arg "Nope"
+    else*)
+      bestW
+
+  method gSome = function
+      None -> raise BatEnum.No_more_elements
+    | Some x -> (BatFloat.of_string x)
 
   (* init the array of input
-   * ex: [((i1, i2, i3)(*, out*)),...]
-   * and the good result -> Nope
+   * ex: [[i1, i2, i3,...],...]
+   * -> handle some exceptions
    *)
-  method read = 0
+  method read filename =
+    let inp = BatFile.lines_of filename in
+    let rec tset yar i s =
+      if i = s then
+        yar
+      else
+        (BatDynArray.add yar (self#gSome(BatEnum.get inp));
+         tset yar (i+1) s)
+    in
+    let rec cer yar i s =
+      if i = s then
+        yar
+      else
+        ((BatDynArray.add yar (tset (BatDynArray.create()) 0 nbrW));
+         cer yar (i+1) s)
+    in input <- cer (BatDynArray.create()) 0 nbrCycle
+
+
 
   method fBestW =
     let rec f_rec n i s =
@@ -84,7 +108,7 @@ object(self)
       if i = s then
         yar
       else
-        (let foo = cycleOne 0. 0 (BatDynArray.length input) in
+        (let foo = cycleOne 0. 0 ((BatDynArray.length input)-1) in
            BatDynArray.add yar foo;
         cycleC yar (i+1) s)
     in
