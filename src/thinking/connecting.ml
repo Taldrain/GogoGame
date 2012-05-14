@@ -1,3 +1,5 @@
+(* print -> 100 *)
+
 open Neural_net
 open Gene
 
@@ -33,6 +35,7 @@ object(self)
   val mutable nbrCycle = nbrC
   val mutable bestW = t
   val mutable nbrW = ni
+  val mutable cntC = 0
 
 
   method gBestW =
@@ -64,7 +67,7 @@ object(self)
       else
         ((BatDynArray.add yar (tset (BatDynArray.create()) 0 nbrW));
          cer yar (i+1) s)
-    in input <- cer (BatDynArray.create()) 0 nbrCycle
+    in input <- cer (BatDynArray.create()) 0 nbrCycle;
 
 
 
@@ -78,7 +81,7 @@ object(self)
             f_rec foo (i+1) s)
         else
             f_rec n (i+1) s)
-    in f_rec 0 0 (BatDynArray.length vecA);
+    in f_rec 0 0 ((BatDynArray.length vecA)-1);
        ()
 
 
@@ -91,16 +94,19 @@ object(self)
         (let bar = (BatDynArray.get yar i)#getWeight in
            BatDynArray.add fool bar;
         mW_rec yar fool (i+1) s)
-    in vecW <- mW_rec nN foo 0 (BatDynArray.length nN)
+    in vecW <- mW_rec nN foo 0 ((BatDynArray.length nN)-1)
 
 
   method cycleNN =
     let rec cycleOne note i s =
       if i = s then
-        (note /. (float(BatDynArray.length input)))
+       (* (print_string "\nnote\t:\t"; print_float note;
+        print_string "\nlength\t:\t"; print_int (BatDynArray.length (BatDynArray.get input cntC));*)
+        (note /. (float(BatDynArray.length(BatDynArray.get input cntC))))
       else
-        (let foo = (BatDynArray.get input i) in
+         (let foo = (BatDynArray.get input cntC) in
          let bar = (BatDynArray.get nN i)#update foo in
+           (*print_string "\nbar\t:\t"; print_float (BatDynArray.last bar);*)
          let fool = note +. (BatDynArray.last bar) in
            cycleOne fool (i+1) s)
     in
@@ -108,12 +114,14 @@ object(self)
       if i = s then
         yar
       else
-        (let foo = cycleOne 0. 0 ((BatDynArray.length input)-1) in
+        ((*print_string "\ninput length\t:\t"; print_int ((BatDynArray.length input)-1);*)
+         let foo = cycleOne 0. 0 (BatDynArray.length(BatDynArray.get input cntC)-1) in
            BatDynArray.add yar foo;
         cycleC yar (i+1) s)
     in
-    let foo = cycleC (BatDynArray.create()) 0 (BatDynArray.length nN) in
-      vecA <- foo
+    let foo = cycleC (BatDynArray.create()) 0 ((BatDynArray.length nN)-1) in
+      vecA <- foo;
+      cntC <- cntC + 1
 
   method putvWeight =
     let rec nihao yar ar i s =
@@ -127,7 +135,7 @@ object(self)
 
 
   method cycleGene = (*TOFIX*)
-    let gen = new geneAlgo (BatDynArray.length nN) 2. 2. (BatDynArray.length vecW)
+    let gen = new geneAlgo ((BatDynArray.length nN)-1) 2. 2. ((BatDynArray.length vecW)-1)
                 2. vecW vecA in
       gen#cycle;
       vecW <- gen#gW;
