@@ -55,7 +55,7 @@ object(self)
         (let bar = (BatDynArray.get vPopu i)#gVecWeight in
            BatDynArray.add yar bar;
         gw_rec yar (i+1) s)
-    in gw_rec foo 0 (BatDynArray.length vPopu)
+    in gw_rec foo 0 ((BatDynArray.length vPopu)-1)
 
   method plusGene =
     self#sCntGeneration (1+cntGeneration)
@@ -99,7 +99,7 @@ object(self)
           let foo = (BatDynArray.get yar i) in
           BatDynArray.set yar i (foo +. randC() *. maxPerturbation));
         parseChr yar (i+1) s)
-    in parseChr chr 0 (BatDynArray.length chr)
+    in parseChr chr 0 ((BatDynArray.length chr)-1)
 
 
   (* bof, ... *)
@@ -134,7 +134,7 @@ object(self)
           (BatDynArray.add c1 (BatDynArray.get d i);
            BatDynArray.add c2 (BatDynArray.get m i);
            off m d c1 c2 (i+1) s)
-      in on mom dad child1 child2 cp (BatDynArray.length mom);
+      in on mom dad child1 child2 cp ((BatDynArray.length mom)-1);
       (child1, child2)
     
   method cycle =

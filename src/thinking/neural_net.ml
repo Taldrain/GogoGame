@@ -166,17 +166,20 @@ object(self)
         if k = s then
           netI
         else
-          (let foo = netI +. (BatDynArray.get f#gInputArr k) *.
+          (try
+            (let foo = netI +. (BatDynArray.get f#gInputArr k) *.
                     (BatDynArray.get inputs cW) in
           pWeightU foo inputs (cW+1) f (k+1) s)
+           with _ -> invalid_arg "ASD")
       in
       (* simplification possible *)
       let rec pNeuronU inputs outputs p j s =
         if j = s then
           outputs
         else
+          (try
           (let foo = (BatDynArray.get p#gNeuronArr j)#gNbrInput in
-          let bar = pWeightU 0. inputs 0 (BatDynArray.get p#gNeuronArr j) 0 foo
+          let bar = pWeightU 0. inputs 0 (BatDynArray.get p#gNeuronArr j) 0 (foo-1)
           in
           let tmp = bar +. 
                    (BatDynArray.get
@@ -185,20 +188,25 @@ object(self)
           in
           BatDynArray.add outputs (self#evalFunction tmp 1.);
           pNeuronU inputs outputs p (j+1) s)
+           with _ -> invalid_arg "AD")
       in
       let rec pLayoutU inputs outputs i s =
         let rec assign inp out e s n =
           if (n > 0) && (e < s) then
-            (let foo = BatDynArray.get out e in
+            (try 
+              let foo = BatDynArray.get out e in
                BatDynArray.set inp e foo;
-            assign inp out (e+1) s n)
+            assign inp out (e+1) s n
+             with _ -> invalid_arg "elseASD")
         in
-        assign inputs outputs 0 (BatDynArray.length outputs) i;
+        assign inputs outputs 0 ((BatDynArray.length outputs)-1) i;
         BatDynArray.clear outputs;
+        try
         let foo = BatDynArray.get layoutArr i in
         pNeuronU inputs outputs foo 0 foo#gNbrNeuron;
+        with _ -> invalid_arg "ASDR"
         pLayoutU inputs outputs (i+1) s
       in
-        pLayoutU input output 0 (nbrILayout+1)
+        pLayoutU input output 0 (nbrILayout)
 end
 
