@@ -134,11 +134,11 @@ let playSimulation : node -> node BatSet.t -> unit =
   fun n seen ->
       let rec randomResult : node -> node BatSet.t -> gameState =
         fun n seen ->
-            (* if not n#is_child_expanded && n#visits < 50 then *)
+            if not n#is_child_expanded && n#visits < 50 then
               playRandomGame n
-            (* else *)
-              (* let next = uctSelect n#child seen in *)
-              (* randomResult next (BatSet.add n) |> invert_gameStatus *)
+            else
+              let next = uctSelect n#child seen in
+              randomResult next (BatSet.add n seen) |> invert_gameStatus
       in
       n#update (randomResult n seen)
 
