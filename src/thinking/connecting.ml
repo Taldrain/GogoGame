@@ -100,9 +100,9 @@ object(self)
   method cycleNN =
     let rec cycleOne note i s =
       if i = s then
-        (print_string "\nnote\t:\t"; print_float note;
-        print_string "\nlength\t:\t"; print_int (BatDynArray.length (BatDynArray.get input cntC));
-        (note /. (float(BatDynArray.length(BatDynArray.get input cntC)))))
+       (* (print_string "\nnote\t:\t"; print_float note;
+        print_string "\nlength\t:\t"; print_int (BatDynArray.length (BatDynArray.get input cntC));*)
+        (note /. (float(BatDynArray.length(BatDynArray.get input cntC))))
       else
          (let foo = (BatDynArray.get input cntC) in
          let bar = (BatDynArray.get nN i)#update foo in
