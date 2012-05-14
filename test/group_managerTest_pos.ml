@@ -190,13 +190,22 @@ let test_fusion () = (* setup *)
 let test_simple_couleur () = todo "not yet"
 
 let suite () =
-  "groupes" >::: [ "groupes monoides" >::: [ "stupides" >::
-  stupid_monoid; "multiples" >:: multiples_monoids; "large" >::
-  large_multiple_monoids ];
-  "allongement de groupes" >:::
-  [ "simple" >:: simple_allongement;"zigzag" >:: zigzag_allongement;
-  "renversement" >:: reverse_allongement ; ]]
-  "renversement" >:: reverse_allongement ; "fusion de deux groupes"
-  >:: test_fusion]]
+  "groupes" >:::
+  [
+    "groupes monoides" >:::
+    [
+      "stupides" >:: stupid_monoid;
+      "multiples" >:: multiples_monoids;
+      "large" >:: large_multiple_monoids
+    ];
+    "allongement de groupes" >:::
+    [
+      "simple" >:: simple_allongement;
+      "zigzag" >:: zigzag_allongement;
+      "renversement" >:: reverse_allongement;
+    ];
+    "renversement" >:: reverse_allongement ;
+    "fusion de deux groupes" >:: test_fusion
+  ]
 (* "groupes multicolores" >::: [ "monoides a couleur opposee" >::        *)
 (* test_simple_couleur] ]                                                *)
