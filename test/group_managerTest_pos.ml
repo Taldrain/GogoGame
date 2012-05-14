@@ -34,6 +34,15 @@ let test_count ~expected =
         count expected)
     (count = expected)
 
+let test_liberty ~expected =
+  let count = !Group_again.Groups.count_groups
+  in
+  assert_bool
+    (sprintf
+        "nombre de groupes detectes incorrect (count a %d, attendu %d)"
+        count expected)
+    (count = expected)
+
 let test_monoids ~vertices =
   let vertices = List.map (int_of_vertex 13) vertices
   in
@@ -205,16 +214,65 @@ let test_fusion () = (* setup *)
       test_count ~expected: 1;
       are_in_same_group ~color: Black ~vertices: [ v1; v16 ]))
 
-let simple_couleurs () = 
+let simple_couleurs () =
   Board_init.self_init ();
-    let v1 = { pass = false; nb = 5; letter = 'F'; } 
-    and v2 = { pass = false; nb = 6; letter = 'D'; }
-    in
+  let v1 = { pass = false; nb = 5; letter = 'F'; }
+  and v2 = { pass = false; nb = 6; letter = 'D'; }
+  in
   (* tests *)
   Engine.play { color = Black; vert = v1; };
-    Engine.play { color = White; vert = v2; };
-          test_count ~expected: 2
-    
+  Engine.play { color = White; vert = v2; };
+  test_count ~expected: 2
+
+let zigzag_color () =
+  Board_init.self_init ();
+  let v1 = { pass = false; nb = 7; letter = 'D'; }
+  
+  and v2 = { pass = false; nb = 8; letter = 'D'; }
+  and v3 = { pass = false; nb = 8; letter = 'E'; }
+  and v4 = { pass = false; nb = 9; letter = 'E'; }
+  
+  and v5 = { pass = false; nb = 9; letter = 'F'; }
+  in
+  Engine.play { color = Black; vert = v1; };
+  Engine.play { color = Black; vert = v2; };
+  Engine.play { color = Black; vert = v3; };
+  Engine.play { color = Black; vert = v4; };
+  Engine.play { color = Black; vert = v5; };
+  test_count ~expected: 1;
+  let v6 = { pass = false; nb = 7; letter = 'G'; }
+  
+  and v7 = { pass = false; nb = 8; letter = 'G'; }
+  and v8 = { pass = false; nb = 8; letter = 'H'; }
+  and v9 = { pass = false; nb = 9; letter = 'H'; }
+  
+  and v10 = { pass = false; nb = 9; letter = 'J'; }
+  in
+  Engine.play { color = Black; vert = v6; };
+  Engine.play { color = Black; vert = v7; };
+  Engine.play { color = Black; vert = v8; };
+  Engine.play { color = Black; vert = v9; };
+  Engine.play { color = Black; vert = v10; };
+  test_count ~expected: 2
+
+let oeil () = 
+  Board_init.self_init ();
+  let v1 = { pass = false; nb = 6; letter = 'G'; }
+  
+  and v2 = { pass = false; nb = 8; letter = 'G'; }
+  and v3 = { pass = false; nb = 7; letter = 'H'; }
+  and v4 = { pass = false; nb = 7; letter = 'G'; }
+  
+  and v5 = { pass = false; nb = 7; letter = 'F'; }
+  in
+  Engine.play { color = Black; vert = v1; };
+  Engine.play { color = Black; vert = v2; };
+  Engine.play { color = Black; vert = v3; };
+  Engine.play { color = White; vert = v4; };
+  test_count ~expected: 4;
+  Engine.play { color = Black; vert = v5; };
+  test_count ~expected: 4
+  
 
 let suite () =
   "groupes" >:::
@@ -227,5 +285,7 @@ let suite () =
   "fusion de deux
   groupes" >:: test_fusion ];
   "multicolores" >:::
-  ["simple couleurs" >:: simple_couleurs
-    ] ]
+  ["simple couleurs" >:: simple_couleurs; "zigzig color" >:: zigzag_color
+  ] ;
+  "attaque" >:::
+  [ "oeil" >:: oeil ]]
