@@ -255,6 +255,9 @@ let zigzag_color () =
   Engine.play { color = Black; vert = v10; };
   test_count ~expected: 2
 
+let simple_stone () = assert true
+let double_stone () = assert true
+let lib_partage () =  assert true
 let oeil () = 
   Board_init.self_init ();
   let v1 = { pass = false; nb = 6; letter = 'G'; }
@@ -287,5 +290,6 @@ let suite () =
   "multicolores" >:::
   ["simple couleurs" >:: simple_couleurs; "zigzig color" >:: zigzag_color
   ] ;
+  "libertés" >::: [ "simple stone">:: simple_stone; "double stone" >:: double_stone; "libertées partagées" >:: lib_partage];
   "attaque" >:::
   [ "oeil" >:: oeil ]]
