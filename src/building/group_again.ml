@@ -98,8 +98,9 @@ let less_liberty s = (* Utilite a verifier *)
           { color = Black; vert = vertex_of_int 13 x; }
       in
       ((group_of_stone s).lib <- (group_of_stone s).lib - 1;
-        if (group_of_stone s).lib < 0
-        then List.iter unstone (group_of_stone s).stones
+        if (group_of_stone s).lib <= 0
+        then (List.iter unstone (group_of_stone s).stones; 
+            Groups.count_groups := !Groups.count_groups-1)
         else ()))
   else ()
 
