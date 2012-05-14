@@ -143,7 +143,6 @@ let reverse_allongement () = (* setup *)
     (Engine.play { color = Black; vert = v1; };
       Engine.play { color = Black; vert = v2; };
       Engine.play { color = Black; vert = v3; };
-      (* (Playing.play_v ~vertices: [ v1; v2; v3 ]; *)
       test_count ~expected: 1;
       are_in_same_group ~color: Black ~vertices: [ v1; v2; v3 ]))
 
@@ -196,6 +195,7 @@ let suite () =
   large_multiple_monoids ];
   "allongement de groupes" >:::
   [ "simple" >:: simple_allongement;"zigzag" >:: zigzag_allongement;
+  "renversement" >:: reverse_allongement ; ]]
   "renversement" >:: reverse_allongement ; "fusion de deux groupes"
   >:: test_fusion]]
 (* "groupes multicolores" >::: [ "monoides a couleur opposee" >::        *)

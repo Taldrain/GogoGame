@@ -21,12 +21,13 @@ let refresh_groups move =
   else
     Group_again.make_group c board#get#blacks board#get#whites
       (int_of_v v)
-(* (BatBitSet.union board#get#blacks board#get#whites)) *)
 
-let genmove c =
-  if last_played#is_empty
+let rec genmove c =
+  if !Fuseki.fuseki
   then (* premier coup, on joue D4 *)
-  { color = Black; vert = { pass = false; nb = 4; letter = 'D' }}
+  try
+    Fuseki.genmove c
+  with Fuseki.Not_Fuseki -> (Fuseki.fuseki := false; genmove c)
   else
     (let _ = Timer.run () in
       let b = board#get in

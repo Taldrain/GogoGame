@@ -98,6 +98,13 @@ struct
   
   let vertex_is_a_pass { nb = _; letter = _; pass = p } = p
   
+  let decomp {pass = p; nb= n; letter = l} = (l,n,p)
+  
+  let dist v1 v2 =
+    let (l1,n1,p1) = decomp v1 and (l2,n2,p2) = decomp v2 in
+    if p1 || p2 then max_int
+    else
+      (abs ((int_of_letter l2) - (int_of_letter l1))) + (abs (n2-n1))
 end
 
 module Move =
