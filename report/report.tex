@@ -1,12 +1,17 @@
-\include{preambule.tex}
+\input{preambule.tex}
 
 \tableofcontents
 
 \chapter*{Introduction}
 
-This report is about the GO contest of the AI course.
+This report is about the GO contest of the AI course.\\
+It contains detailed description of the AI project.\\
+\\
+At the beginning the project was designed in C++ but then we decide to change to
+a completly different langage OCaml.\\
+With this powerfull langage we managed to write some great algorithm like an UCT
+or a Neural Network.\\
 
-It contains detailed description of the structure of our AI, the algorithms we have implemented, description of some of our choices, and an analyze of the result we obtain in our tests.
 
 \chapter{Common Part}
 
@@ -54,7 +59,27 @@ We choose OCaml because:
 
 
 
-\subsection{Genetic Algorithm}
+\subsection{Genetic Algorithm and Neural Network}
+Because we knowed that a lot of game of Go (already played) are easily
+accessible we wanted to have an easy way to know if it's better to attack or
+defend at a t time. This is possible by a genetic algorithm and a neural
+network.\\
+\\
+We create a neural network, no intern layout it's not necessary for what we
+want, that have in input the number of vertice in a Go board and in output we
+have the response, we know if we have to attack or defend.\\
+Of course it's necessay to do some learning because otherwise we would have to
+test each combination of weight for each node. Speaking of which, the function
+used to determine the output is the Sigmoid function.\\
+\\
+So, the other part is the genetic algorithm. It's independant with the
+neural network but necessary. In our project we used it to shuffle, mutate and
+do some cross-over with our data of weight.\\
+After that we have a completly new population, supposed better, that we take to
+replace our current data of weight in our neural network.\\
+\\
+These two algorithms have been implemented in a completly generic way so that we
+can use them for whatever we want.\\
 
 \section{Results}
 
