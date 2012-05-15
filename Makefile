@@ -21,7 +21,7 @@ exe: native
 
 native:
 	$(COMPILE) main.native
-	cp ./main.native gogogame
+	@cp ./main.native gogogame
 bytecode:
 	$(COMPILE) main.byte
 debug:

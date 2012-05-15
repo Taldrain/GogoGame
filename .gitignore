@@ -17,3 +17,8 @@ _build/
 *.native
 
 vendor/*
+*.aux
+*.idx
+*.log
+*.toc
+
