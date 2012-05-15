@@ -90,7 +90,40 @@ let slookUp i stones = (testUp i) && (BatBitSet.is_set stones (up i))
 
 let slookDw i stones = (testDw i) && (BatBitSet.is_set stones (down i))
 
-let less_liberty s = (* Utilite a verifier *)
+let less_liberty s blacks whites =
+  let my_color = color_of_blk_wht blacks whites s in
+  let check_free list =
+    let rec rec_check l =
+      match l with
+      | [] -> false
+      | e:: l -> (color_of_blk_wht blacks whites e = Empty) || (color_of_blk_wht blacks whites e = my_color) || rec_check l
+    in
+    let rec my_fun_map f l =
+      match l with
+      |[] -> []
+      | e:: l -> List.concat[my_fun_map f l; (f e )]
+    in
+    let rec my_fun_comp f l =
+      match l with
+      |[] -> false
+      | e:: l -> f e || my_fun_comp f l
+    in
+    let add_into_list i =
+      let accu = ref [] in
+      begin
+        if testUp i then
+          accu := (up i)::!accu;
+        if testDw i then
+          accu := (down i)::!accu;
+        if testLf i then
+          accu := (left i)::!accu;
+        if testRg i then
+          accu := (right i)::!accu;
+      end;
+      !accu
+    in
+    (rec_check) (my_fun_map (add_into_list) (group_of_stone s).stones)
+  in
   if (group_of_stone s) <> dummy_group
   then
     (let unstone x =
@@ -98,9 +131,9 @@ let less_liberty s = (* Utilite a verifier *)
           { color = Black; vert = vertex_of_int 13 x; }
       in
       ((group_of_stone s).lib <- (group_of_stone s).lib - 1;
-        if (group_of_stone s).lib <= 0
-        then (List.iter unstone (group_of_stone s).stones; 
-            Groups.count_groups := !Groups.count_groups-1)
+        if check_free (group_of_stone s).stones (*(group_of_stone s).lib <= 0*)
+        then (List.iter unstone (group_of_stone s).stones;
+          Groups.count_groups := !Groups.count_groups -1)
         else ()))
   else ()
 
@@ -118,7 +151,7 @@ let rec make_group color blacks whites id =
             match color_of_blk_wht blacks whites s with
             | Empty -> lookup to_look (found, (liberties + 1)) seen
             | c when c <> color ->
-                (less_liberty s; lookup to_look (found, liberties) seen)
+                (less_liberty s blacks whites; lookup to_look (found, liberties) seen)
             | _ ->
                 let fnd = ref found
                 
