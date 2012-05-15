@@ -89,7 +89,7 @@ Pr. Liqing \textsc{Zhang}
 \vfill
 
 % Bottom of the page
-{\large 22 février 2012}
+{\large May $15^{th}$ 2012}
 
 \end{center}
 
@@ -104,7 +104,7 @@ Pr. Liqing \textsc{Zhang}
 
 This report is about the GO contest of the AI course.
 
-It contains detailed description of the 
+It contains detailed description of the structure of our AI, the algorithms we have implemented, description of some of our choices, and an analyze of the result we obtain in our tests.
 
 \chapter{Common Part}
 
@@ -117,12 +117,32 @@ Then, we will see the differents algorithms we choose to implement and, last but
 
 \subsection{Explanations}
 
+The classics way for programming this project was C or C++. It's the general choice, the choice that a lot of groups make.
+
+Otherwise, these languages are lacking a lot on sides that matters from an strictly algorithmic point of view.
+
+The most important problem with C-based languages is that they are state-based. A variable is a location on the memory and the programmer have to manage this memory himself, changing value by hand.\\
+
+In this way, programming have a lot of side-effects, and the whole program is weakened by  an approximative memory gestion.
+
+Good programmers use the manual memory gestion as an advantage in order to gain efficiencity, but our project is not about memory gestion but Articifial Intelligence algorithms.\\
+
+On the other way, functionnal programming avoid mutable variables and changing states but use functionnal application of contants values.
+
+This permit a way of programming with very few side-effects, with less memory management, and permit to be more focused on the algorithm itself.
+
 \subsection{Why OCaml}
 
+
+
+
 \section{Algortihms}
+
 \subsection{Upper bound for Confidence Tree (\textsc{Uct})}
 
 \subsection{Negascout}
+
+
 
 \subsection{Genetic Algorithm}
 
