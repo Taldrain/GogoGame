@@ -1,0 +1,142 @@
+\documentclass[12pt,a4paper,titlepage]{book}
+\usepackage[utf8x]{inputenc}
+\usepackage{ucs}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{makeidx}
+\usepackage{graphicx}
+
+\usepackage{eurosym}
+\usepackage{fancyhdr,extramarks}
+\usepackage{titletoc}
+
+\setlength{\parskip}{1ex} %retour à la ligne
+\setlength{\headsep}{40pt}
+\setlength{\footskip}{60pt}
+\usepackage{setspace}
+%\singlespacing
+\onehalfspacing
+%\doublespacing
+%\setstretch{1.1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
+\DeclareSymbolFont{extraup}{U}{zavm}{m}{n}
+\DeclareMathSymbol{\varheart}{\mathalpha}{extraup}{86}
+\DeclareMathSymbol{\vardiamond}{\mathalpha}{extraup}{87}
+
+\titlecontents{chapter}[3pc]{\addvspace{1.5pc}\bfseries\filright}{\contentslabel[\thecontentslabel]{3pc}}{}{\hfill\contentspage}[\addvspace{2pt}]
+\makeatletter
+\renewcommand\chapter{\clearpage\@startsection{chapter}{0}{1em}{\baselineskip}{2\baselineskip}{\Huge\textbf}}
+\makeatother
+
+%En-tête et pieds de pages
+\pagestyle{fancyplain}
+	\lhead[\emph{\nouppercase{\leftmark}}]{\emph{\textit{AI Report}}}
+	\chead{}
+	\rhead[\emph{\textit{AI Report}}]{\emph{\nouppercase{\leftmark}}}
+	\lfoot[]{\small{\textit{Thomas Wickham}}}
+	\rfoot[\small{\textit{Thomas Wickham}}]{}
+
+%%%% macro caption %%%%
+\makeatletter
+\def\@captype{table}
+\makeatother
+%%%% fin macro %%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\author{WICKHAM Thomas}
+
+\title{AI Report}
+
+\makeindex
+
+\begin{document}
+
+\begin{titlepage}
+
+\begin{center}
+\textsc{\LARGE AI Report}\\[0.5cm]
+
+
+% Title
+\HRule \\[1.0cm]
+{\Huge \bfseries Go game (Wei Qi)\\[2ex]
+Artificial Intelligence}\\[1.0cm]
+
+\HRule \\[2.0cm]
+
+% Author and supervisor
+\begin{minipage}{0.4\textwidth}
+\begin{flushleft} \large
+\emph{Author:}\\
+Thomas \textsc{Wickham}
+\end{flushleft}
+\end{minipage}
+\begin{minipage}{0.4\textwidth}
+\begin{flushright} \large
+\emph{Instructor:} \\
+Pr. Liqing \textsc{Zhang}
+\end{flushright}
+\end{minipage}
+
+\vfill
+
+% Bottom of the page
+{\large 22 février 2012}
+
+\end{center}
+
+\end{titlepage}
+
+\newpage
+
+
+\tableofcontents
+
+\chapter*{Introduction}
+
+This report is about the GO contest of the AI course.
+
+It contains detailed description of the 
+
+\chapter{Common Part}
+
+In this part, we will discut about the common work of the group.
+
+Firstly, we will discuss our choice to use OCaml, a functionnal language.
+Then, we will see the differents algorithms we choose to implement and, last but not least, we will analyze our results.
+
+\section{The choice of a functionnal Language}
+
+\subsection{Explanations}
+
+\subsection{Why OCaml}
+
+\section{Algortihms}
+\subsection{Upper bound for Confidence Tree (\textsc{Uct})}
+
+\subsection{Negascout}
+
+\subsection{Genetic Algorithm}
+
+\section{Results}
+
+\chapter{Individual Part}
+
+\section{Tasks}
+
+\section{Personnal value in the project}
+
+\section{Individual Conclusion}
+
+\chapter*{Conclusion}
+plap
+
+\end{document}
