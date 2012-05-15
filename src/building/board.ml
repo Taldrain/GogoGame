@@ -108,14 +108,14 @@ let id_get_neighbours s =
   !l
 
 let get_color blacks whites s =
-  if BatBitSet.is_set blacks s 
+  if bitSet_is_set blacks s 
   then Black
-  else if BatBitSet.is_set whites s then White
+  else if bitSet_is_set whites s then White
        else Empty
 
 (** renvoie la liste des vertices d'une zone **)
 (* let rec get_stones blacks whites color seen accu s =                                          *)
-(*   if BatBitSet.is_set seen s then accu                                                        *)
+(*   if bitSet_is_set seen s then accu                                                        *)
 (*   else                                                                                        *)
 (*     (BatBitSet.set seen s;                                                                    *)
 (*       match get_color blacks whites s with                                                    *)

@@ -29,7 +29,7 @@ let generate_next col s () =
   let empties = BatBitSet.create_full 168 in
   (BatBitSet.differentiate empties (BatBitSet.union s.blk s.wht);
     let rec next_empty i =
-      if not (BatBitSet.is_set empties (i +1)) then next_empty (i +2) else (i +1)
+      if not (bitSet_is_set empties (i +1)) then next_empty (i +2) else (i +1)
     in
     let rec gen i accu =
       if i = 168 then accu
@@ -39,10 +39,9 @@ let generate_next col s () =
           then (bitset_set_nth s.blk i, s.wht)
           else (s.blk, bitset_set_nth s.wht i)
         in
-        gen (next_empty i) (BatSet.add
-              (state blacks whites { color = col; vert = (vertex_of_id i) })
-              accu)
+        gen (next_empty i) (
+              (state blacks whites { color = col; vert = (vertex_of_id i) })::accu)
     in
-    gen (next_empty 0) (BatSet.empty))
+    gen (next_empty 0) [])
 
 

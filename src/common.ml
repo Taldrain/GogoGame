@@ -79,6 +79,10 @@ let bitset_set_nth b n =
 let bitset_unset_nth b n =
    let b = BatBitSet.copy b in (BatBitSet.put b false n;b)
 
+let bitSet_is_set b i =
+  let tmp = BatBitSet.clone b in
+  (BatBitSet.set tmp i;
+  BatBitSet.equals b tmp)
 
 (* "These functions are mine, do you understand that!" *)
 (*  -- Soldier                                         *)

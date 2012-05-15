@@ -36,8 +36,8 @@ struct
     | Empty -> Empty
   
   let color_of_blk_wht blk wht s =
-    if BatBitSet.is_set blk s then Black
-    else if BatBitSet.is_set wht s then White
+    if bitSet_is_set blk s then Black
+    else if bitSet_is_set wht s then White
     else Empty
 end
 

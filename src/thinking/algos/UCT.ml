@@ -16,7 +16,28 @@ open AlgoUtils
 let seed = BatRandom.self_init ()
 let uctk = 0.44 (* sqrt (1/5) *)
 
-let reader : (unit -> unit option) Global.global = new Global.global "reader"
+(* let reader : (unit -> unit option) Global.global = new Global.global "reader" *)
+(* let file = BatFile.open_out ~mode:[`create;`append;`text;`nonblock] "log/UCT.log" *)
+let trace str = ()(*(BatIO.nwrite file)*)
+
+let clock = ref 0.
+let start () = clock := Unix.time ()
+let remaining () = Unix.time () -. !clock
+
+let choose l = BatList.at l (BatRandom.int (List.length l))
+let choose_diff l1 l2 =
+  let c = ref (choose l1) in
+  while List.mem !c l2 do
+    c := choose l1
+  done; !c
+
+let compute_uct v1 visits winRate =
+  if visits > 0 then
+    let uct = uctk *. (sqrt (log ((float_of_int v1) /. (float_of_int visits))))
+    in
+    (int_of_float winRate) + (int_of_float uct)
+  else
+    10000 + 1000 * (BatRandom.int 1000)
 
 module NodeDB =
 struct
@@ -38,9 +59,9 @@ object(self)
   val color = color
   val id = id
   val father = father
-  
-  val mutable children : node BatSet.t option = None
-  
+
+  val mutable children : node list option = None
+
   method color = color
   method visits = visits
   method blacks = blk
@@ -50,15 +71,15 @@ object(self)
   method child : node =
     match children with
     | None -> self#expand_children; self#child
-    | Some set -> BatSet.choose set
+    | Some set -> choose set
   
-  method get_sibling : node BatSet.t -> node =
+  method get_sibling : node list -> node =
     fun seen ->
         match children with
         | None -> failwith "daFuk ?"
-        | Some set -> BatSet.choose (BatSet.diff set seen)
+        | Some set -> choose_diff set seen
   
-  method sibling : node BatSet.t -> node =
+  method sibling : node list -> node =
     fun seen -> father#get_sibling seen
   
   method expand_children : unit =
@@ -75,78 +96,77 @@ object(self)
           mov = { color = color; vert = (vertex_of_id id) };
         } ()
     in
-    children <- Some (BatSet.map gen_node set)
+    children <- Some (List.map gen_node set)
   
   method update : gameState -> unit =
     fun result ->
         visits <- visits + 1;
         if result = Win then wins <- wins + 1 else ()
-  
+
   method getWinRate =
     if visits > 0
     then (float_of_int wins) /. (float_of_int visits)
     else 0. (* should not happend *)
+
+  method find_best_child =
+    match children with
+    | None -> self#child
+    | Some set ->
+      let first = List.hd set in
+      let uct_base = compute_uct first#visits first#visits first#getWinRate in
+      fst (List.fold_left
+      (fun (b, buct) n ->
+        let uctvalue = compute_uct b#visits n#visits n#getWinRate in
+        if buct > uctvalue then (b, buct) else (n, uctvalue))
+        (first,uct_base)
+        set)
+
 end
-
-let get_best_child (root: node) (seen: node BatSet.t) =
-  let rec find best child seen =
-    let sibling = (child#sibling seen) in
-    if child#visits > best#visits
-    then find child sibling (BatSet.add sibling seen)
-    else find best sibling (BatSet.add sibling seen)
-  in
-  find root root#child seen
-
-let uctSelect : node -> node BatSet.t -> node =
-  fun node seen ->
-      let rec select next best_uct res =
-        Best.set_best (res#blacks, res#whites);
-        match reader#get () with
-        | Some _ -> (Thread.exit (); failwith "plop")
-        | None ->
-            let uctvalue =
-              if next#visits > 0 then
-                let uct = uctk *. (sqrt (log ((float_of_int node#visits) /. (float_of_int next#visits))))
-                in
-                (int_of_float next#getWinRate) + (int_of_float uct)
-              else
-                10000 + 1000 * (BatRandom.int 1000)
-            in
-            if uctvalue > best_uct
-            then select (next#sibling (BatSet.add next seen)) uctvalue next
-            else select (next#sibling (BatSet.add next seen)) best_uct res
-      in
-      select (node#sibling seen) 0 node
 
 let playRandomGame: node -> Entities.gameState =
   fun node ->
       let game_over n =
+        try
         (BatBitSet.count n#blacks) + (BatBitSet.count n#whites) >= 100
+        with _ -> true
       in
       let rec play node =
+        trace ".";
         if not (game_over node) then play (node#child) else node
       in
-      let (blk, wht) = Scoring.score node#blacks node#whites in
+      trace "\n** Playing a game: ";
+      let result = play node in
+      trace "\t\t[SCORING]\n";
+      let (blk, wht) = Scoring.score result#blacks result#whites trace in
       let comp = if node#color = White then (<) else (>) in
-      if comp blk wht then Win else Lose
+      trace "GAME OVER";
+      if comp blk wht then (trace "/Win\n"; Win) else (trace "/Lose\n"; Lose)
 
-let playSimulation : node -> node BatSet.t -> unit =
+let playSimulation : node -> node list -> unit =
   fun n seen ->
-      let rec randomResult : node -> node BatSet.t -> gameState =
+      let rec randomResult : node -> node list -> gameState =
         fun n seen ->
-            if not n#is_child_expanded && n#visits < 50 then
-              playRandomGame n
+            if n#visits < 0
+            then
+              (trace "\t\t[RANDOM GAME]";
+                playRandomGame n)
             else
-              let next = uctSelect n#child seen in
-              randomResult next (BatSet.add n seen) |> invert_gameStatus
+              (trace "\t\t[RANDOM RESULT]\n";
+                let next = n#find_best_child in
+                randomResult next (n:: seen) |> invert_gameStatus)
       in
+      trace "\nPlaying simulation...";
       n#update (randomResult n seen)
 
-let uctSearch ~nbSim ~color ~last_move ~blacks ~whites ~channel () =
-  reader#set channel;
+let uctSearch ~nbSim ~color ~last_move ~blacks ~whites () =
+  start ();
+  trace "\n************************************************\n";
+  trace "Beginning UCT...\n\n";
+  (* reader#set channel; *)
   let r = Obj.magic None in
   let rec root = new node (invert_color color) last_move blacks whites r in
-  for i = 0 to nbSim do
-    let _ = playSimulation root BatSet.empty in ()
+  while true do
+    let _ = playSimulation root [] in ()
   done;
-  get_best_child root (BatSet.empty)
+  let best = root#find_best_child in
+  (best#blacks,best#whites)

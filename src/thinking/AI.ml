@@ -8,11 +8,10 @@ open Entities.Move
 open Entities.Vertex
 open Board
 open Globals
+open Common
+open AlgoUtils
 
-(* SETUP *)
-let _ =
-  Timer.set_timer 7.5; (* set le timeout a 9.5 secondes *)
-  let _ = Thread.sigmask Unix.SIG_BLOCK [Sys.sigalrm] in ()
+let _ = BatRandom.self_init ()
 
 let refresh_groups move =
   let { color = c; vert = v } = move in
@@ -22,35 +21,60 @@ let refresh_groups move =
     Group_again.make_group c board#get#blacks board#get#whites
       (int_of_v v)
 
+let rec play_randomly c b =
+  let n = BatRandom.int 14 and l = (letter_of_int (BatRandom.int 14)) in
+  let id = int_of_v {pass=false; nb = n; letter = l} in
+  if bitSet_is_set b#not_empty id then play_randomly c b
+  else { color = c; vert = { pass = false; nb = n; letter = l}}
+
+
+let use_uct c b =
+  let (blk,wht) = UCT.uctSearch
+      ~nbSim:500
+      ~color: c
+      ~last_move: (Globals.last_played#get)
+      ~blacks: b#blacks
+      ~whites: b#whites
+      ()
+  in
+  let diff = 
+  if c = Black then
+    let diff = BatBitSet.copy b#blacks in
+    BatBitSet.diff blk diff
+  else
+    let diff = BatBitSet.copy b#whites in
+    BatBitSet.diff wht diff
+  in
+  match BatEnum.get (BatBitSet.enum diff) with
+    | None -> play_randomly c b
+    | Some i -> { color = c; vert = (vertex_of_id i)}
+
+let use_negascout c b =
+  let move = { color = (invert_color c); vert = (vertex_of_id Globals.last_played#get)} in
+  let s = { blk = b#blacks; wht = b#whites; mov = move } in
+  let (_,s) = Negascout.find_best c (AlgoUtils.generate_next (invert_color c) s ())
+  in
+  s.mov
+
+let use_mirroring c =
+  let move = { color = (invert_color c); vert = (vertex_of_id Globals.last_played#get)} in
+  Mirroring.genmove c move
+
 let rec genmove c =
   if !Fuseki.fuseki
   then (* premier coup, on joue D4 *)
   try
     Fuseki.genmove c
   with Fuseki.Not_Fuseki -> (Fuseki.fuseki := false; genmove c)
-  else
-    (let _ = Timer.run () in
+  else (
       let b = board#get in
-      let ch = Event.new_channel () in
-      let writer_end () = Event.poll (Event.send ch ())
-      and reader_end () = Event.poll (Event.receive ch) in
-      let _ =
-        Thread.create (UCT.uctSearch
-              ~nbSim:50
-              ~color: c
-              ~last_move: (Globals.last_played#get)
-              ~blacks: b#blacks
-              ~whites: b#whites
-              ~channel: (reader_end)) ()
-      in
-      let _ = Thread.wait_signal [Sys.sigalrm] in
-      let _ = writer_end () in
-      Best.get_move b c)
+      try
+        use_mirroring c
+      with Mirroring.Not_efficient ->
+        play_randomly c b
+      )
 
-(* let genmove c = let b = board#get in let rec try_id i = match b#get i   *)
-(* with | Corner (_, Empty, _) | Border (_, Empty, _) | Middle (_, Empty,  *)
-(* _) -> i | _ -> try_id (i +1) in { color = c; vert = (vertex_of_int      *)
-(* b#size (try_id 0)) }                                                    *)
+
 
 let _ =
   let event_clear = Globals.event_clear#get in

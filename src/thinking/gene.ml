@@ -20,7 +20,7 @@ let constructG cl pop c f =
        vPS yar (i+1) s cL c f)
   in vPS (BatDynArray.create()) 0 pop cl c f
 
-class geneAlgo populos mRate cRate chromoLength mP mW mF = 
+class geneAlgo populos mRate cRate chromoLength mP mW mF =
   let crVpop = constructG chromoLength populos mW mF in
 object(self)
   val mutable vPopu = crVpop
