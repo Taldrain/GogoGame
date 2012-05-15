@@ -1,5 +1,4 @@
-(**
-TA TA TAAAAAM le test des groupes
+(**TA TA TAAAAAM le test des groupes
 **)
 open OUnit
 
@@ -34,14 +33,13 @@ let test_count ~expected =
         count expected)
     (count = expected)
 
-let test_liberty ~expected =
-  let count = !Group_again.Groups.count_groups
+let test_liberty ~expected ~vertices =
+  let head = int_of_v ( List.hd vertices) in
+  let count = get_group_lib head
   in
   assert_bool
-    (sprintf
-        "nombre de groupes detectes incorrect (count a %d, attendu %d)"
-        count expected)
-    (count = expected)
+    (sprintf "nombre de libertes detectees incorrectes (count a %d, attendu %d)"
+        count expected) (count = expected)
 
 let test_monoids ~vertices =
   let vertices = List.map (int_of_vertex 13) vertices
@@ -74,7 +72,10 @@ let stupid_monoid () = (* setup *)
     let m = { color = Black; vert = v; }
     in
     (* tests *)
-    (Engine.play m; test_count ~expected: 1; test_monoids ~vertices: [ v ]))
+    (Engine.play m;
+      test_count ~expected: 1;
+      test_monoids ~vertices: [ v ];
+      test_liberty ~expected: 4 ~vertices: [ v ]))
 
 let multiples_monoids () = (* setup *)
   (Board_init.self_init ();
@@ -133,7 +134,8 @@ let simple_allongement () = (* setup *)
     (Engine.play { color = Black; vert = v1; };
       Engine.play { color = Black; vert = v2; };
       test_count ~expected: 1;
-      are_in_same_group ~color: Black ~vertices: [ v1; v2 ]))
+      are_in_same_group ~color: Black ~vertices: [ v1; v2 ];
+      test_liberty ~expected: 6 ~vertices: [v1; v2] ))
 
 let zigzag_allongement () = (* setup *)
   (Board_init.self_init ();
@@ -153,7 +155,8 @@ let zigzag_allongement () = (* setup *)
       Engine.play { color = Black; vert = v5; };
       Playing.play_v ~vertices: [ v1; v2; v3; v4; v5 ];
       test_count ~expected: 1;
-      are_in_same_group ~color: Black ~vertices: [ v1; v2; v3; v4; v5 ]))
+      are_in_same_group ~color: Black ~vertices: [ v1; v2; v3; v4; v5 ];
+      test_liberty ~expected: 9 ~vertices:[v1; v2; v3; v4; v5]))
 
 let reverse_allongement () = (* setup *)
   (Board_init.self_init ();
@@ -168,7 +171,8 @@ let reverse_allongement () = (* setup *)
       Engine.play { color = Black; vert = v2; };
       Engine.play { color = Black; vert = v3; };
       test_count ~expected: 1;
-      are_in_same_group ~color: Black ~vertices: [ v1; v2; v3 ]))
+      are_in_same_group ~color: Black ~vertices: [ v1; v2; v3 ];
+      test_liberty ~expected: 8 ~vertices:[v1; v2; v3]))
 
 let test_fusion () = (* setup *)
   (Board_init.self_init ();
@@ -215,67 +219,111 @@ let test_fusion () = (* setup *)
       are_in_same_group ~color: Black ~vertices: [ v1; v16 ]))
 
 let simple_couleurs () =
-  Board_init.self_init ();
-  let v1 = { pass = false; nb = 5; letter = 'F'; }
-  and v2 = { pass = false; nb = 6; letter = 'D'; }
-  in
-  (* tests *)
-  Engine.play { color = Black; vert = v1; };
-  Engine.play { color = White; vert = v2; };
-  test_count ~expected: 2
+  (Board_init.self_init ();
+    let v1 = { pass = false; nb = 5; letter = 'F'; }
+    
+    and v2 = { pass = false; nb = 6; letter = 'D'; }
+    in
+    (* tests *)
+    (Engine.play { color = Black; vert = v1; };
+      Engine.play { color = White; vert = v2; };
+      test_count ~expected: 2))
 
 let zigzag_color () =
+  (Board_init.self_init ();
+    let v1 = { pass = false; nb = 7; letter = 'D'; }
+    
+    and v2 = { pass = false; nb = 8; letter = 'D'; }
+    and v3 = { pass = false; nb = 8; letter = 'E'; }
+    and v4 = { pass = false; nb = 9; letter = 'E'; }
+    
+    and v5 = { pass = false; nb = 9; letter = 'F'; }
+    in
+    (Engine.play { color = Black; vert = v1; };
+      Engine.play { color = Black; vert = v2; };
+      Engine.play { color = Black; vert = v3; };
+      Engine.play { color = Black; vert = v4; };
+      Engine.play { color = Black; vert = v5; };
+      test_count ~expected: 1;
+      let v6 = { pass = false; nb = 7; letter = 'G'; }
+      
+      and v7 = { pass = false; nb = 8; letter = 'G'; }
+      and v8 = { pass = false; nb = 8; letter = 'H'; }
+      and v9 = { pass = false; nb = 9; letter = 'H'; }
+      
+      and v10 = { pass = false; nb = 9; letter = 'J'; }
+      in
+      (Engine.play { color = Black; vert = v6; };
+        Engine.play { color = Black; vert = v7; };
+        Engine.play { color = Black; vert = v8; };
+        Engine.play { color = Black; vert = v9; };
+        Engine.play { color = Black; vert = v10; };
+        test_count ~expected: 2)))
+
+let oeil () =
+  (Board_init.self_init ();
+    let v1 = { pass = false; nb = 6; letter = 'G'; }
+    
+    and v2 = { pass = false; nb = 8; letter = 'G'; }
+    and v3 = { pass = false; nb = 7; letter = 'H'; }
+    and v4 = { pass = false; nb = 7; letter = 'G'; }
+    
+    and v5 = { pass = false; nb = 7; letter = 'F'; }
+    in
+    (Engine.play { color = Black; vert = v1; };
+      Engine.play { color = Black; vert = v2; };
+      Engine.play { color = Black; vert = v3; };
+      Engine.play { color = White; vert = v4; };
+      test_count ~expected: 4;
+      Engine.play { color = Black; vert = v5; };
+      test_count ~expected: 4))
+
+let square () =
   Board_init.self_init ();
-  let v1 = { pass = false; nb = 7; letter = 'D'; }
-  
-  and v2 = { pass = false; nb = 8; letter = 'D'; }
-  and v3 = { pass = false; nb = 8; letter = 'E'; }
-  and v4 = { pass = false; nb = 9; letter = 'E'; }
-  
-  and v5 = { pass = false; nb = 9; letter = 'F'; }
+  let v1 = { pass = false; nb = 9; letter = 'E'; }
+  and v2 = { pass = false; nb = 9; letter = 'F'; }
+  and v3 = { pass = false; nb = 9; letter = 'G'; }
+  and v4 = { pass = false; nb = 9; letter = 'H'; }
+  and v5 = { pass = false; nb = 8; letter = 'H'; }
+  and v6 = { pass = false; nb = 7; letter = 'H'; }
+  and v7 = { pass = false; nb = 6; letter = 'H'; }
+  and v8 = { pass = false; nb = 6; letter = 'G'; }
+  and v9 = { pass = false; nb = 6; letter = 'F'; }
+  and v10 = { pass = false; nb = 6; letter = 'E'; }
+  and v11 = { pass = false; nb = 7; letter = 'E'; }
+  and v12 = { pass = false; nb = 8; letter = 'E'; }
+  and v13 = { pass = false; nb = 8; letter = 'F'; }
+  and v14 = { pass = false; nb = 7; letter = 'F'; }
+  and v15 = { pass = false; nb = 8; letter = 'H'; }
+  and v16 = { pass = false; nb = 7; letter = 'G'; }
   in
   Engine.play { color = Black; vert = v1; };
   Engine.play { color = Black; vert = v2; };
   Engine.play { color = Black; vert = v3; };
   Engine.play { color = Black; vert = v4; };
-  Engine.play { color = Black; vert = v5; };
   test_count ~expected: 1;
-  let v6 = { pass = false; nb = 7; letter = 'G'; }
-  
-  and v7 = { pass = false; nb = 8; letter = 'G'; }
-  and v8 = { pass = false; nb = 8; letter = 'H'; }
-  and v9 = { pass = false; nb = 9; letter = 'H'; }
-  
-  and v10 = { pass = false; nb = 9; letter = 'J'; }
-  in
+  Engine.play { color = Black; vert = v5; };
   Engine.play { color = Black; vert = v6; };
   Engine.play { color = Black; vert = v7; };
   Engine.play { color = Black; vert = v8; };
+  test_count ~expected: 1;
   Engine.play { color = Black; vert = v9; };
   Engine.play { color = Black; vert = v10; };
+  Engine.play { color = Black; vert = v11; };
+  Engine.play { color = Black; vert = v12; };
+  test_count ~expected: 1;
+  test_liberty ~expected: 20 ~vertices: [v1];
+  Engine.play { color = White; vert = v13; };
+  Engine.play { color = White; vert = v14; };
   test_count ~expected: 2
-
-let simple_stone () = assert true
-let double_stone () = assert true
-let lib_partage () =  assert true
-let oeil () = 
-  Board_init.self_init ();
-  let v1 = { pass = false; nb = 6; letter = 'G'; }
-  
-  and v2 = { pass = false; nb = 8; letter = 'G'; }
-  and v3 = { pass = false; nb = 7; letter = 'H'; }
-  and v4 = { pass = false; nb = 7; letter = 'G'; }
-  
-  and v5 = { pass = false; nb = 7; letter = 'F'; }
-  in
-  Engine.play { color = Black; vert = v1; };
-  Engine.play { color = Black; vert = v2; };
-  Engine.play { color = Black; vert = v3; };
-  Engine.play { color = White; vert = v4; };
-  test_count ~expected: 4;
-  Engine.play { color = Black; vert = v5; };
-  test_count ~expected: 4
-  
+  (* test_liberty ~expected: 2 ~vertices: [v13]; *)
+  (* test_liberty ~expected: 18 ~vertices: [v1]  *)
+  (* Engine.play { color = Black; vert = v15; };  *)
+  (* Engine.play { color = Black; vert = v16; };  *)
+  (*  test_liberty ~expected: 13 ~vertices: [v1]; *)
+  (* test_count ~expected: 2;                     *)
+  (*  test_liberty ~expected: 13 ~vertices: [v1]  *)
+                                               
 
 let suite () =
   "groupes" >:::
@@ -288,8 +336,6 @@ let suite () =
   "fusion de deux
   groupes" >:: test_fusion ];
   "multicolores" >:::
-  ["simple couleurs" >:: simple_couleurs; "zigzig color" >:: zigzag_color
-  ] ;
-  "libertés" >::: [ "simple stone">:: simple_stone; "double stone" >:: double_stone; "libertées partagées" >:: lib_partage];
-  "attaque" >:::
-  [ "oeil" >:: oeil ]]
+  [ "simple couleurs" >:: simple_couleurs;
+  "zigzig color" >:: zigzag_color ];
+  "attaque" >::: [ "oeil" >:: oeil;"square" >:: square ] ]
