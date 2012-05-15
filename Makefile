@@ -16,12 +16,13 @@ COMPILE := $(CC) $(FLAGS) $(PKG) $(INC)
 
 TEST_FLAGS := -pkg oUnit -I test -I test/utils
 
-all: speed_test exe
-exe: native
+all: native
+test : speed_test exe
 
 native:
 	$(COMPILE) main.native
 	cp ./main.native gogogame
+	rm *.native
 bytecode:
 	$(COMPILE) main.byte
 debug:

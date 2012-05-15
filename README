@@ -1,22 +1,31 @@
                             GogoGame
-                A student project for a Go Game
-                   Developpement in progress
+               A student project for a Go Game in OCaml
 
 1. Why ?
-This project has been created in the context of a AI class of the University of
+  This project has been created in the context of a AI class of the University of
 Shanghai.
-It's a project who will be used to understand how to program an AI and must not
-be taken as a real simulation of a go game.
 
-2. Utilisation
-Everything is still not implemented.
-If you want to pass you have to enter the coordonnees Z and 0.
 
-3. Todo
-    - Finish the interface for be able to play
-        - make the game engine
-        - try to output some fancy/useful things
-    - Prepare an good way to implement the AI
-    - Learn English
+2. Dependences
+  List of package needed for:
 
-    
+  Archlinux:
+    ocaml
+    ocaml-findlib
+    ocaml-batteries (in the AUR)
+    ocaml-lwt (in the AUR)
+
+
+3. Installation
+  After all dependences are install we can use these command to interact with the
+project:
+
+  To compile the project:
+    $ make
+
+  You should know have access to the binaries of the project "gogogame" at the
+root of the directory
+
+  You can then clean the directory:
+    $ make clean
+
