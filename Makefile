@@ -50,4 +50,6 @@ clean:
 	ocamlbuild -clean
 
 cleanall:
-	rm gogogame
+	rm -f gogogame
+	rm -rf _build/
+mrproper: cleanall
