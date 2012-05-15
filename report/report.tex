@@ -15,10 +15,10 @@ or a Neural Network.\\
 
 \chapter{Common Part}
 
-In this part, we will discut about the common work of the group.
+In this part, we will discuss about the common work of the group.
 
 Firstly, we will discuss our choice to use OCaml, a functionnal language.
-Then, we will see the differents algorithms we choose to implement and, last but not least, we will analyze our results.
+Then, we will see the differents algorithms we choose to implement and, last but not least.
 
 \section{The choice of a functionnal Language}
 
@@ -53,13 +53,40 @@ We choose OCaml because:
 
 \section{Algortihms}
 
-\subsection{Upper bound for Confidence Tree (\textsc{Uct})}
+In this sectionm we will discuss about the differents algorithms we decided to implements, and describe how we implements it.
+
+\subsection{Upper bound for Confidence Tree (\textsc{UCT})}
+
+The Upper bound for Confidence Tree algorithm, also named UCT, is a derivative of the Monte-Carlo methods.\\
+
+The Monte-Carlo method deals with statistics. The main idea is to play randomly a lot and a lot of games, counting the winning and the losing games with a play.
+
+Statically, the play with the highest winning rate is not a bad play. More the engine play random games and more accurate the statistic is. With enough computer power, and enough sinulations, the resulting plays are all good.\\
+
+But the Monte-Carlo itself is to wide for a Go board. The is to many moves to be really effective.
+
+This is why the team behinf Mogo improve it with the UCT algorithm, wich combine Monte-Carlo with some selection in order to gain efficiency.\\
+
+We implemeted UCT basicly, with nodes containing mutables data --- like the visits of the winning rate --- representing the state of the board.
+
+The goal was to have a common state representation fo the board, shared between all the differents algorithms we use, even if they use it in a different manner.
+
+In this way, we can share the state generation between algorithms and sharing the optimization we found.\\
+
+Unfortunately, we didn't found the time to optimize the state generation. A smart state generation will favorize good moves, putting the worsts in the bottom of an ordered structure, and will organize all in a smart and effective data strcuture like a heap or a stream.\\
+
+As the state generation is not a rigid need for UCT work, we didn't prioritize this work . It was a bad decision : all our algorithms would have a real gain of a good state generation. Both in term of speed or accuracy.
+
+
 
 \subsection{Negascout}
 
 
 
 \subsection{Genetic Algorithm and Neural Network}
+
+Neural networks are fast and efficient with a learning base big enough.
+
 Because we knowed that a lot of game of Go (already played) are easily
 accessible we wanted to have an easy way to know if it's better to attack or
 defend at a t time. This is possible by a genetic algorithm and a neural
