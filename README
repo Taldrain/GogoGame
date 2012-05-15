@@ -2,18 +2,28 @@
                A student project for a Go Game in OCaml
 
 1. Why ?
-  This project has been created in the context of a AI class of the University of
-Shanghai.
+  This project has been created in the context of a AI class of the Shaghai
+Jiao Tong University.
 
 
 2. Dependences
+
+This project has been coded with linux tools, under the distributions Ubuntu
+and Arch Linux.
+As OCaml is a multiplateform language, you can certainly compile it for Windows
+and Mac, but it will be painfull.
+
   List of package needed for:
 
-  Archlinux:
+  ** Ubuntu:
+    ocaml-native-compilers
+    ocaml-findlib
+    libbatteries-ocaml-dev
+
+  ** Archlinux:
     ocaml
     ocaml-findlib
     ocaml-batteries (in the AUR)
-    ocaml-lwt (in the AUR)
 
 
 3. Installation
@@ -28,4 +38,7 @@ root of the directory
 
   You can then clean the directory:
     $ make clean
+
+  Or call for a spring clean:
+    $ make mrproper
 
