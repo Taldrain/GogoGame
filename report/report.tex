@@ -78,10 +78,39 @@ Unfortunately, we didn't found the time to optimize the state generation. A smar
 As the state generation is not a rigid need for UCT work, we didn't prioritize this work . It was a bad decision : all our algorithms would have a real gain of a good state generation. Both in term of speed or accuracy.
 
 
-
 \subsection{Negascout}
 
+One of the most commonly used algorithm for two players game with total knowledge is the Min-Max based algorithms.
 
+Negascout is one of them. It profits of the efficiency given by $\alpha-\beta$ prunnig in alliance with the strength of the SCOUT algorithm.
+
+\paragraph{The $\alpha-\beta$ Algorithm}
+is an ammelioration of Min-Max algorithms. It use prunning to avoid expanding all the children states of a given state.
+
+If the evaluation function give a value that is under the lower bound or find a better value that the upper bound, it stops the expansion and give back the best find value.
+
+\paragraph{The SCOUT Algorithm} was more a theorical purpose algorithm. It use the ordering of the children to bet that the firsts are more effective thant the other.
+
+It evaluate the firsts son of the current node, and test if the value of the first child is the best. If it is not, it reevaluate the set of the children in order to improve the ordering.
+
+This strategy give better results than $\alpha-\beta$ for deep trees.\\
+
+All Min-Max based algorithm use an evaluation function, also called heuristic function.
+Our evaluation function used differents parts of the board:
+\begin{description}
+\item[The position], as playing in the corner or in the border is generally a bad move, we can give a malus to these cells. In the same way, playing in the middle is somewhat weak if no groups or shape are in support. A little malus was given for the middle too.
+
+In the other side, the second and the third line are really good location to build a strength territory without fearing the adversary. We can give a bonus to these cells.
+
+\item[Shapes] are stones that could be easily connected but are not. It's the mark of a good player to know and build shapes in his territory.
+
+Our AI have a small library of shapes (about 30) that are tested to see if some of the stones matche or not. This is obviously a great bonus.
+
+\item[Groups] are the essence of the Go game. If you want to win, you have to make  strong groups with a lot of liberty, or eyes.\\
+The evaluation function have a group module. It count the number of groups and its liberty. With the positionning function and the shape function, we can give a rating point to a group, mesuring its importance in the game.
+\end{description}
+
+Our evaluation function is quiet simple relatively to the major go AI, and lacks of a lot of optimizations.
 
 \subsection{Genetic Algorithm and Neural Network}
 
