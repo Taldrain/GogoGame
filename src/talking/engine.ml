@@ -153,4 +153,3 @@ let action = function
   | Play m -> (try (play m; Success) with Illegal_move -> Failure "illegal_move")
   | GenMove c -> genmove c
   | Undo -> undo (); Success
-  | Showboard -> SuccessSTR (Showboard.display b#get)

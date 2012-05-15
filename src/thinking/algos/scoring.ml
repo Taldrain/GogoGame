@@ -199,7 +199,7 @@ let score blk wht tracing =
     blacks := blk;
     whites := wht;
     mark_deads ();
-    "\t[Deads OK] ||";
+    tracing "\t[Deads OK] ||";
     let (score, scored) = mark_score ()
     
     and b = ref 0

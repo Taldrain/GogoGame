@@ -147,8 +147,8 @@ let rec parse_cmd e =
       (match get e with
         | 'e' -> verify e "t_free_handicap " (* wut *)
               (fun e -> Set_free_handicap (parse_vertex_list e))
-        | 'h' -> verify e "owboard"
-              (fun e -> Showboard)
+        (* | 'h' -> verify e "owboard" *)
+        (*       (fun e -> Showboard)  *)
         | _ -> raise Unknown_command)
   | 'u' -> verify e "ndo" (fun e -> Undo)
   | 'v' -> verify e "ersion" (fun e -> Version)

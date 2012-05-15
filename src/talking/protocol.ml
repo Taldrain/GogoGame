@@ -68,7 +68,7 @@ type command =
 (*| Reg_genmove*)
 
 (* debug commands *)
-  | Showboard
+  (* | Showboard *)
 
 let string_of_command = function
   | Protocol_version -> "protocol_version"
@@ -87,7 +87,7 @@ let string_of_command = function
   | Play m -> "play "^(Move.string_of_move m)
   | GenMove c -> "genmove "^(Color.string_of_color c)
   | Undo -> "undo"
-  | Showboard -> "showboard"
+  (* | Showboard -> "showboard" *)
 
 
 type message =

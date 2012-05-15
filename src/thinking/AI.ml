@@ -56,9 +56,9 @@ let use_negascout c b =
   in
   s.mov
 
-let use_mirroring c =
+let use_mirroring c b =
   let move = { color = (invert_color c); vert = (vertex_of_id Globals.last_played#get)} in
-  Mirroring.genmove c move
+  Mirroring.genmove c move b
 
 let rec genmove c =
   if !Fuseki.fuseki
@@ -69,7 +69,7 @@ let rec genmove c =
   else (
       let b = board#get in
       try
-        use_mirroring c
+        use_mirroring c b
       with Mirroring.Not_efficient ->
         play_randomly c b
       )
