@@ -25,6 +25,7 @@ and Mac, but it will be painfull.
     ocaml-native-compilers
     ocaml-findlib
     libbatteries-ocaml-dev
+    oasis
 
   ** Archlinux:
     ocaml
