@@ -8,6 +8,7 @@ open Entities.Move
 open Entities.Vertex
   
 open Entities.Color
+open Common
   
 type group = { (* count: int; *) mutable lib : int; stones : int BatList.t }
 
@@ -76,22 +77,22 @@ let testLf id = id > 12
   
 let testRg id = id < 156
   
-let lookLf i stones = BatBitSet.is_set stones (left i)
+let lookLf i stones = bitSet_is_set stones (left i)
   
-let lookRg i stones = BatBitSet.is_set stones (right i)
+let lookRg i stones = bitSet_is_set stones (right i)
   
-let lookUp i stones = BatBitSet.is_set stones (up i)
+let lookUp i stones = bitSet_is_set stones (up i)
   
-let lookDw i stones = BatBitSet.is_set stones (down i)
+let lookDw i stones = bitSet_is_set stones (down i)
   
 (* version safe du lookup *)
-let slookLf i stones = (testLf i) && (BatBitSet.is_set stones (left i))
+let slookLf i stones = (testLf i) && (bitSet_is_set stones (left i))
   
-let slookRg i stones = (testRg i) && (BatBitSet.is_set stones (right i))
+let slookRg i stones = (testRg i) && (bitSet_is_set stones (right i))
   
-let slookUp i stones = (testUp i) && (BatBitSet.is_set stones (up i))
+let slookUp i stones = (testUp i) && (bitSet_is_set stones (up i))
   
-let slookDw i stones = (testDw i) && (BatBitSet.is_set stones (down i))
+let slookDw i stones = (testDw i) && (bitSet_is_set stones (down i))
   
 let less_liberty s blacks whites =
   let my_color = color_of_blk_wht blacks whites s in

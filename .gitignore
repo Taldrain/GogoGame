@@ -15,5 +15,11 @@
 .depend
 _build/
 *.native
+gogogame
 
 vendor/*
+*.aux
+*.idx
+*.log
+*.toc
+

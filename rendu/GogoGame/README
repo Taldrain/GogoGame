@@ -5,7 +5,7 @@
   This project has been created in the context of a AI class of the Shanghai
 Jiao Tong University.
   This project regroup the students:
-    Thomas Wickam,  7090309125
+    Thomas Wickham,  7090309125
     Alonso Giraldo, 7090309109
     Jimmy Lanclume, 7090309127
     Thomas Mariaux, 7090309117
@@ -25,7 +25,6 @@ and Mac, but it will be painfull.
     ocaml-native-compilers
     ocaml-findlib
     libbatteries-ocaml-dev
-    oasis
 
   ** Archlinux:
     ocaml
