@@ -48,3 +48,6 @@ test: speed_test
 
 clean:
 	ocamlbuild -clean
+
+cleanall:
+	rm gogogame
