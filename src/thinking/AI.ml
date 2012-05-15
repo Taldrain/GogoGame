@@ -69,7 +69,7 @@ let rec genmove c =
   else (
       let b = board#get in
       try
-        use_mirroring c b
+        use_negascout c b
       with Mirroring.Not_efficient ->
         play_randomly c b
       )

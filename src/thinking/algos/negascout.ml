@@ -23,15 +23,17 @@ let is_end s = (BatBitSet.count s.blk) + (BatBitSet.count s.wht) > 165
 
 
 let eval_cell i =
+  (tracing "applying position bonus...";
   let m = i mod 13 in
   match (i,m) with
   | (0,_) | (12,_) | (156,_) | (169,_) -> -30 (* coins *)
   | (i,0) | (i,_) when i < 12 || i > 156  -> -10 (* bord *)
   | (i,1) | (i,_) when i < 29 || i > 141 -> 5 (* ligne du territoire *)
   | (i,2) | (i,_) when i < 40 || i > 133 -> 10 (* ligne de la victoire *)
-  | _ -> 0
+  | _ -> 0)
 
 let find_shapes set =
+  (trace "finding shapes...";
   let rec find i offset =
     assert (offset >= 0);
     if not (bitSet_is_set set offset) then false
@@ -52,9 +54,11 @@ let find_shapes set =
     	if (i mod 13 < 11) && find i j then incr count
     done
   done;
-  (50 * !count)
+  trace "\t\t[DONE]\n";
+  (50 * !count))
 
 let rate_groups set =
+  (trace "Rating groups...";
   let tbl = Hashtbl.create 101
   and nb_groups = ref 0
   and lib = ref 0
@@ -67,21 +71,24 @@ let rate_groups set =
       lib := !lib + l;
       incr nb_groups
   done;
-  (!nb_groups * (!lib * !lib))
+  trace "\t\t[DONE]\n";
+  (!nb_groups * (!lib * !lib)))
 
 
 
 let eval (blacks,whites,c,id) =
+  (tracing "[EVAL]\n";
   let bonus = eval_cell id
   and shape_bonus = (if c = Black then find_shapes blacks else find_shapes whites)
   and groups_bonus = (if c = Black then rate_groups blacks else rate_groups whites)
   in
-  bonus + shape_bonus + groups_bonus
+  bonus + shape_bonus + groups_bonus)
 
 let generate_next color s = AlgoUtils.generate_next color s
 
 
 let take_best l =
+  (tracing "\n** Find the best";
   let rec best ((b_score,b_state):(int * AlgoUtils.state)) =
     function
     | [] -> (b_score,b_state)
@@ -89,14 +96,19 @@ let take_best l =
         if score > b_score
         then best (score,state) l
         else best (b_score,b_state) l
-  in best (List.hd l) (List.tl l)
+  in
+  tracing "\t\t[FOUND]\n";
+  best (List.hd l) (List.tl l))
 
+let soi = string_of_int
 
 exception Result of AlgoUtils.state
 let rec negascout : int -> int -> int -> AlgoUtils.state -> Entities.Color.t -> (int * AlgoUtils.state) =
  fun depth alpha beta state color ->
+  (tracing ("[NEGASCOUT d="^(soi depth)^"]\n");
   let first_child = ref true in
   let rec main depth b beta alpha state =
+    tracing "main|";
     let (score,state) =
       let (s,state) = (negascout (depth - 1) (- b) (- alpha) state (invert_color color))
       in
@@ -127,7 +139,7 @@ let rec negascout : int -> int -> int -> AlgoUtils.state -> Entities.Color.t -> 
     and children = generate_next color state ()
     in
     List.map (main depth b beta alpha) children |> take_best
-  )
+  ))
 
 let find_best color states =
   (List.map (fun s -> negascout depth min_int max_int s color) states)
