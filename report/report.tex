@@ -89,7 +89,7 @@ Pr. Liqing \textsc{Zhang}
 \vfill
 
 % Bottom of the page
-{\large 22 février 2012}
+{\large February 22th 2012}
 
 \end{center}
 
@@ -128,6 +128,30 @@ Then, we will see the differents algorithms we choose to implement and, last but
 \subsection{Upper bound for Confidence Tree (\textsc{Uct})}
 
 \subsection{Negascout}
+\subsubsection*{Groups}
+In this game, the most important thing is, of course, the stones.\\ 
+During the game, the stones are added one per one. So that, some
+groups of stones can be finally created. The better groups you own, 
+the better chances to win you have. The algorithm Negascout have to 
+find the way to make the best groups.\\
+\\
+First at all, what's exactly a group in our porject? It's a set which owns 2 labels :
+the liberty of the group which is the number of empty cases around it and 
+the list of the stones which are the group itself. So, let's talk about 
+how do we build this structure.\\
+When a stone is added to the board, all the cases around this stone are checked.
+We don't refresh all the board but only the stones in contact with the stone 
+that we played. By the way, there is 3 differents cases.\\ 
+\\
+If the case is empty, the group of this stone will have one more liberty.
+If there is a already a stone, depend of the color. When it is the same color as
+the added stone, they will be in the same group and the liberty of this new group
+depends of the liberty of the stone that is why we have to check the stone and
+add its group if needed. Last case is when there is an opposite color as yours,
+just decrease the liberty of the other group that can detroy it if the is no 
+liberties left.\\
+\\
+That is why we implemented and use groups. It is the better way to manages stones.\\
 
 \subsection{Genetic Algorithm and Neural Network}
 Because we knowed that a lot of game of Go (already played) are easily
